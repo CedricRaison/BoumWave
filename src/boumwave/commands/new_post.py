@@ -31,6 +31,30 @@ def slugify(text: str) -> str:
     return text
 
 
+def filesify(text: str) -> str:
+    """
+    Convert text to a filesystem-friendly name while preserving accents.
+
+    Args:
+        text: Text to convert to filesystem name
+
+    Returns:
+        Filesified text (lowercase, underscores instead of spaces, preserves Unicode)
+    """
+    # Convert to lowercase
+    text = text.lower()
+    # Replace spaces and hyphens with underscores
+    text = re.sub(r"[\s-]+", "_", text)
+    # Remove only problematic filesystem characters, keeping Unicode letters and digits
+    # Remove: / \ : * ? " < > |
+    text = re.sub(r'[/\\:*?"<>|]', "", text)
+    # Remove multiple consecutive underscores
+    text = re.sub(r"_+", "_", text)
+    # Remove leading/trailing underscores
+    text = text.strip("_")
+    return text
+
+
 def new_post_command(title: str) -> None:
     """
     New post command: creates a new post with files for all configured languages.
@@ -59,14 +83,23 @@ def new_post_command(title: str) -> None:
     output_folder = config.get("paths", {}).get("output_folder", "posts")
     languages = config.get("site", {}).get("languages", ["en"])
 
-    # Generate slug from title
+    # Generate slug from title (for URLs and front matter)
     slug = slugify(title)
     if not slug:
         print("Error: Could not generate a valid slug from the title.", file=sys.stderr)
         sys.exit(1)
 
+    # Generate filesystem-friendly name (for folders and files)
+    fs_name = filesify(title)
+    if not fs_name:
+        print(
+            "Error: Could not generate a valid filename from the title.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     # Create post directory
-    post_dir = Path(content_folder) / slug
+    post_dir = Path(content_folder) / fs_name
     if post_dir.exists():
         print(f"Error: Post directory '{post_dir}' already exists.", file=sys.stderr)
         sys.exit(1)
@@ -91,7 +124,7 @@ def new_post_command(title: str) -> None:
     # Create a file for each language
     created_files = []
     for lang in languages:
-        filename = f"{slug}.{lang}.md"
+        filename = f"{fs_name}.{lang}.md"
         file_path = post_dir / filename
 
         # Fill template with actual values
@@ -108,7 +141,7 @@ def new_post_command(title: str) -> None:
             sys.exit(1)
 
     # Success message
-    print(f"✓ Created new post: {slug}")
+    print(f"✓ Created new post: {fs_name}")
     print(f"  Location: {post_dir}")
     print("  Files created:")
     for filename in created_files:
