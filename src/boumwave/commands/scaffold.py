@@ -1,35 +1,22 @@
 """Scaffold command: creates the folder structure based on boumwave.toml"""
 
 import sys
-import tomllib
 from pathlib import Path
+
+from boumwave.models import load_config
 
 
 def scaffold_command() -> None:
     """
     Scaffold command: creates the folder structure based on boumwave.toml.
     """
-    config_file = Path("boumwave.toml")
-
-    # Check if config file exists
-    if not config_file.exists():
-        print("Error: boumwave.toml not found.", file=sys.stderr)
-        print("Run 'bw init' first to create the configuration file.", file=sys.stderr)
-        sys.exit(1)
-
-    # Read the configuration file
-    try:
-        with open(config_file, "rb") as f:
-            config = tomllib.load(f)
-    except Exception as e:
-        print(f"Error reading configuration file: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Load and validate configuration
+    config = load_config()
 
     # Get folder paths from config
-    paths_config = config.get("paths", {})
-    template_folder = paths_config.get("template_folder", "templates")
-    content_folder = paths_config.get("content_folder", "content")
-    output_folder = paths_config.get("output_folder", "posts")
+    template_folder = config.paths.template_folder
+    content_folder = config.paths.content_folder
+    output_folder = config.paths.output_folder
 
     folders_to_create = [
         ("template", template_folder),

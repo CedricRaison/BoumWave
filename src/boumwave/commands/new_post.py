@@ -2,10 +2,11 @@
 
 import re
 import sys
-import tomllib
 from datetime import date
 from importlib.resources import files
 from pathlib import Path
+
+from boumwave.models import load_config
 
 
 def slugify(text: str) -> str:
@@ -62,26 +63,13 @@ def new_post_command(title: str) -> None:
     Args:
         title: Title of the new post
     """
-    config_file = Path("boumwave.toml")
-
-    # Check if config file exists
-    if not config_file.exists():
-        print("Error: boumwave.toml not found.", file=sys.stderr)
-        print("Run 'bw init' first to create the configuration file.", file=sys.stderr)
-        sys.exit(1)
-
-    # Read the configuration file
-    try:
-        with open(config_file, "rb") as f:
-            config = tomllib.load(f)
-    except Exception as e:
-        print(f"Error reading configuration file: {e}", file=sys.stderr)
-        sys.exit(1)
+    # Load and validate configuration
+    config = load_config()
 
     # Get configuration values
-    content_folder = config.get("paths", {}).get("content_folder", "content")
-    output_folder = config.get("paths", {}).get("output_folder", "posts")
-    languages = config.get("site", {}).get("languages", ["en"])
+    content_folder = config.paths.content_folder
+    output_folder = config.paths.output_folder
+    languages = config.site.languages
 
     # Generate slug from title (for URLs and front matter)
     slug = slugify(title)
