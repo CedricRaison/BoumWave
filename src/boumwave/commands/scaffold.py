@@ -25,20 +25,33 @@ def scaffold_command() -> None:
         print(f"Error reading configuration file: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Get the templates folder path from config
-    templates_folder = config.get("paths", {}).get("templates_folder", "templates")
-    templates_path = Path(templates_folder)
+    # Get folder paths from config
+    paths_config = config.get("paths", {})
+    template_folder = paths_config.get("template_folder", "templates")
+    content_folder = paths_config.get("content_folder", "content")
 
-    # Create the folder if it doesn't exist
-    if templates_path.exists():
-        print(f"⚠ Warning: '{templates_folder}' already exists, skipping creation.")
-    else:
-        try:
-            templates_path.mkdir(parents=True, exist_ok=False)
-            print(f"✓ Created folder: {templates_folder}")
-        except Exception as e:
-            print(f"Error creating folder '{templates_folder}': {e}", file=sys.stderr)
-            sys.exit(1)
+    folders_to_create = [
+        ("template", template_folder),
+        ("content", content_folder),
+    ]
+
+    # Create folders if they don't exist
+    created_folders = []
+    for folder_type, folder_path in folders_to_create:
+        path = Path(folder_path)
+        if path.exists():
+            print(f"⚠ Warning: '{folder_path}' already exists, skipping creation.")
+        else:
+            try:
+                path.mkdir(parents=True, exist_ok=False)
+                print(f"✓ Created {folder_type} folder: {folder_path}")
+                created_folders.append(folder_path)
+            except Exception as e:
+                print(f"Error creating folder '{folder_path}': {e}", file=sys.stderr)
+                sys.exit(1)
 
     print()
-    print("Scaffold completed! Your project structure is ready.")
+    if created_folders:
+        print("Scaffold completed! Your project structure is ready.")
+    else:
+        print("Scaffold completed! All folders already exist.")

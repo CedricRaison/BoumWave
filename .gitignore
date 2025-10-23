@@ -12,3 +12,5 @@ wheels/
 .claude
 .ruff_cache
 boumwave.toml
+content/
+templates/

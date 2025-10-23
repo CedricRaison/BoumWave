@@ -3,7 +3,12 @@
 import argparse
 import sys
 
-from boumwave.commands import create_command, init_command, scaffold_command
+from boumwave.commands import (
+    create_command,
+    init_command,
+    new_post_command,
+    scaffold_command,
+)
 
 
 def main() -> None:
@@ -22,6 +27,12 @@ def main() -> None:
 
     # 'scaffold' subcommand
     subparsers.add_parser("scaffold", help="Create folder structure from configuration")
+
+    # 'new_post' subcommand
+    new_post_parser = subparsers.add_parser(
+        "new_post", help="Create a new post with language files"
+    )
+    new_post_parser.add_argument("title", help="Title of the new post")
 
     # 'create' subcommand
     create_parser = subparsers.add_parser(
@@ -44,6 +55,8 @@ def main() -> None:
         init_command()
     elif args.command == "scaffold":
         scaffold_command()
+    elif args.command == "new_post":
+        new_post_command(args.title)
     elif args.command == "create":
         create_command(args.filepath)
 

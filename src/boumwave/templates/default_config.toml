@@ -2,5 +2,16 @@
 # Edit this file to customize your static site generator settings
 
 [paths]
-# Folder where all your templates for building articles will be stored
-templates_folder = "templates"
+# Folder where your HTML templates are stored
+template_folder = "templates"
+
+# Folder where your markdown content files are stored
+content_folder = "content"
+
+[site]
+# Languages supported by your site
+# Examples:
+#   Single language: languages = ["en"]
+#   Multiple languages: languages = ["fr", "en"]
+# Note: You don't need to write every post in every language
+languages = ["en", "fr"]
