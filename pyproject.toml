@@ -1,0 +1,15 @@
+[project]
+name = "BoumWave"
+version = "0.1.0"
+description = "An easy static blog generator"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ruff>=0.14.1",
+]
+
+[project.scripts]
+bw = "boumwave.cli:main"
+
+[tool.uv]
+package = true

@@ -1,0 +1,6 @@
+# BoumWave Configuration File
+# Edit this file to customize your static site generator settings
+
+[paths]
+# Folder where all your templates for building articles will be stored
+templates_folder = "templates"
