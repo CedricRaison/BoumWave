@@ -4,7 +4,6 @@ import argparse
 import sys
 
 from boumwave.commands import (
-    create_command,
     init_command,
     new_post_command,
     scaffold_command,
@@ -34,14 +33,6 @@ def main() -> None:
     )
     new_post_parser.add_argument("title", help="Title of the new post")
 
-    # 'create' subcommand
-    create_parser = subparsers.add_parser(
-        "create", help="Read and display file content"
-    )
-    create_parser.add_argument(
-        "filepath", help="Path to the file to read (e.g., my_post.md)"
-    )
-
     # Parse arguments
     args = parser.parse_args()
 
@@ -57,8 +48,6 @@ def main() -> None:
         scaffold_command()
     elif args.command == "new_post":
         new_post_command(args.title)
-    elif args.command == "create":
-        create_command(args.filepath)
 
 
 if __name__ == "__main__":
