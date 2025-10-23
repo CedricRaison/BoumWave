@@ -13,5 +13,5 @@ wheels/
 .ruff_cache
 boumwave.toml
 content/
-templates/
+/templates/
 CLAUDE.md

@@ -14,4 +14,4 @@ content_folder = "content"
 #   Single language: languages = ["en"]
 #   Multiple languages: languages = ["fr", "en"]
 # Note: You don't need to write every post in every language
-languages = ["en", "fr"]
+languages = ["en"]
