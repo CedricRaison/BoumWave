@@ -8,6 +8,10 @@ template_folder = "templates"
 # Folder where your markdown content files are stored
 content_folder = "content"
 
+# Folder where the generated posts will be output
+# This will also be used as the URL path segment (e.g., example.com/posts/)
+output_folder = "posts"
+
 [site]
 # Languages supported by your site
 # Examples:

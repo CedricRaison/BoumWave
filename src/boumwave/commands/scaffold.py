@@ -29,10 +29,12 @@ def scaffold_command() -> None:
     paths_config = config.get("paths", {})
     template_folder = paths_config.get("template_folder", "templates")
     content_folder = paths_config.get("content_folder", "content")
+    output_folder = paths_config.get("output_folder", "posts")
 
     folders_to_create = [
         ("template", template_folder),
         ("content", content_folder),
+        ("output", output_folder),
     ]
 
     # Create folders if they don't exist

@@ -14,4 +14,5 @@ wheels/
 boumwave.toml
 content/
 /templates/
+posts/
 CLAUDE.md

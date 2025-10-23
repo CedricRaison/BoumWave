@@ -56,6 +56,7 @@ def new_post_command(title: str) -> None:
 
     # Get configuration values
     content_folder = config.get("paths", {}).get("content_folder", "content")
+    output_folder = config.get("paths", {}).get("output_folder", "posts")
     languages = config.get("site", {}).get("languages", ["en"])
 
     # Generate slug from title
@@ -94,7 +95,9 @@ def new_post_command(title: str) -> None:
         file_path = post_dir / filename
 
         # Fill template with actual values
-        content = post_template.format(title=title, slug=slug, date=today, lang=lang)
+        content = post_template.format(
+            title=title, slug=slug, date=today, lang=lang, output_folder=output_folder
+        )
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
