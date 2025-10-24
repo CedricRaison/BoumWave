@@ -19,3 +19,8 @@ output_folder = "posts"
 #   Multiple languages: languages = ["fr", "en"]
 # Note: You don't need to write every post in every language
 languages = ["en"]
+
+# Path to your site's logo
+# This logo will be used for social media meta tags (Open Graph, Twitter Card)
+# when sharing articles that don't have their own image
+logo_path = "path/to/logo.jpg"

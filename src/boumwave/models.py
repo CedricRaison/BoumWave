@@ -24,6 +24,9 @@ class SiteConfig(BaseModel):
     languages: list[str] = Field(
         description="List of language codes supported by the site (e.g., ['en', 'fr'])"
     )
+    logo_path: str = Field(
+        description="Path to the site logo for social media meta tags (fallback when post has no image)"
+    )
 
 
 class BoumWaveConfig(BaseModel):
