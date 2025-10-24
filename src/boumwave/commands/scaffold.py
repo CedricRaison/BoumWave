@@ -3,7 +3,7 @@
 import sys
 from pathlib import Path
 
-from boumwave.models import load_config
+from boumwave.config import load_config
 
 
 def scaffold_command() -> None:

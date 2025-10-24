@@ -6,7 +6,7 @@ from datetime import date
 from importlib.resources import files
 from pathlib import Path
 
-from boumwave.models import load_config
+from boumwave.config import load_config
 
 
 def slugify(text: str) -> str:

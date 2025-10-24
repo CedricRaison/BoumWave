@@ -4,6 +4,7 @@ import argparse
 import sys
 
 from boumwave.commands import (
+    generate_command,
     init_command,
     new_post_command,
     scaffold_command,
@@ -33,6 +34,14 @@ def main() -> None:
     )
     new_post_parser.add_argument("title", help="Title of the new post")
 
+    # 'generate' subcommand
+    generate_parser = subparsers.add_parser(
+        "generate", help="Generate HTML from markdown post"
+    )
+    generate_parser.add_argument(
+        "post_name", help="Name of the post folder to generate"
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -48,6 +57,8 @@ def main() -> None:
         scaffold_command()
     elif args.command == "new_post":
         new_post_command(args.title)
+    elif args.command == "generate":
+        generate_command(args.post_name)
 
 
 if __name__ == "__main__":
