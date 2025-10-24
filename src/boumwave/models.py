@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from pydantic import BaseModel, Field, FilePath, HttpUrl
+from pydantic import BaseModel, Field, FilePath, HttpUrl, computed_field
 
 
 class Post(BaseModel):
@@ -22,6 +22,24 @@ class Post(BaseModel):
     lang: str = Field(
         ..., description="Language code (e.g., 'en', 'fr')", pattern=r"^[a-z]{2}$"
     )
+
+    @computed_field
+    @property
+    def published_datetime_iso(self) -> str:
+        """
+        ISO 8601 datetime format for meta tags.
+        Converts the date to datetime with 00:00:00 UTC.
+        """
+        return f"{self.published_date}T00:00:00Z"
+
+    @computed_field
+    @property
+    def published_date_display(self) -> str:
+        """
+        Human-readable date format for display.
+        Currently returns ISO date format, will be localized later.
+        """
+        return str(self.published_date)
 
     class Config:
         """Pydantic configuration"""

@@ -90,7 +90,7 @@ def generate_meta_tags(
     <meta property="og:url" content="{full_url}">
     <meta property="og:image" content="{image_path}">
     <meta property="og:locale" content="{post.lang}">
-    <meta property="article:published_time" content="{post.published_date}">
+    <meta property="article:published_time" content="{post.published_datetime_iso}">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
