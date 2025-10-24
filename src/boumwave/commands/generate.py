@@ -69,6 +69,7 @@ def generate(post_name: str) -> None:
             description=description,
             image=image_path,
             content_html=content_html,
+            site_config=config.site,
         )
 
         # 7. Render user template

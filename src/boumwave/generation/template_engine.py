@@ -40,7 +40,8 @@ def render_template(template_path: Path, enriched_post: EnrichedPost) -> str:
     context = {
         "lang": enriched_post.post.lang,
         "title": enriched_post.post.title,
-        "published_date": enriched_post.post.published_date,
+        "published_datetime_iso": enriched_post.post.published_datetime_iso,
+        "published_on_date": enriched_post.published_on_date,
         "content": enriched_post.content_html,
     }
 

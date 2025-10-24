@@ -2,7 +2,10 @@
 
 from datetime import date
 
+from babel.dates import format_date
 from pydantic import BaseModel, Field, FilePath, HttpUrl, computed_field
+
+from boumwave.config import SiteConfig
 
 
 class Post(BaseModel):
@@ -31,15 +34,6 @@ class Post(BaseModel):
         Converts the date to datetime with 00:00:00 UTC.
         """
         return f"{self.published_date}T00:00:00Z"
-
-    @computed_field
-    @property
-    def published_date_display(self) -> str:
-        """
-        Human-readable date format for display.
-        Currently returns ISO date format, will be localized later.
-        """
-        return str(self.published_date)
 
     class Config:
         """Pydantic configuration"""
@@ -76,3 +70,27 @@ class EnrichedPost(BaseModel):
         ..., description="Path to image for social media (first image or logo)"
     )
     content_html: str = Field(..., description="Rendered HTML content from markdown")
+    site_config: SiteConfig = Field(
+        ..., description="Site configuration for accessing date format and translations"
+    )
+
+    @computed_field
+    @property
+    def published_on_date(self) -> str:
+        """
+        Complete publication message combining translation and formatted date.
+        Uses site_config.translations[lang].published_on and site_config.date_format.
+
+        Example: "Published on October 24, 2025"
+        """
+        # Format the date according to config and language
+        formatted_date = format_date(
+            self.post.published_date,
+            format=self.site_config.date_format.value,
+            locale=self.post.lang,
+        )
+
+        # Get the translation for "Published on"
+        translation = self.site_config.translations[self.post.lang].published_on
+
+        return f"{translation} {formatted_date}"

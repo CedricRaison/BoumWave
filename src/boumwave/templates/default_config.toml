@@ -32,3 +32,22 @@ site_url = "https://example.com"
 # This logo will be used for social media meta tags (Open Graph, Twitter Card)
 # when sharing articles that don't have their own image
 logo_path = "path/to/logo.jpg"
+
+# Date format for displaying publication dates
+# Available formats (examples for October 24, 2025):
+#   short  → 10/24/25
+#   medium → Oct 24, 2025
+#   long   → October 24, 2025
+#   full   → Friday, October 24, 2025
+# Note: Dates are automatically localized based on the post language
+#       (e.g., "long" becomes "24 octobre 2025" in French, "October 24, 2025" in English)
+date_format = "long"
+
+# Translations for template text
+# You must provide translations for each language defined in 'languages'
+[site.translations.en]
+published_on = "Published on"
+
+# To support multiple languages, add a section for each language code:
+# [site.translations.fr]
+# published_on = "Publié le"

@@ -2,9 +2,27 @@
 
 import sys
 import tomllib
+from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, Field, HttpUrl, ValidationError
+from pydantic import BaseModel, Field, HttpUrl, ValidationError, model_validator
+
+
+class DateFormat(str, Enum):
+    """Available date formats for displaying publication dates"""
+
+    SHORT = "short"
+    MEDIUM = "medium"
+    LONG = "long"
+    FULL = "full"
+
+
+class Translations(BaseModel):
+    """Translations for template text"""
+
+    published_on: str = Field(
+        description="Translation for 'Published on' text in templates"
+    )
 
 
 class PathsConfig(BaseModel):
@@ -32,6 +50,31 @@ class SiteConfig(BaseModel):
     logo_path: str = Field(
         description="Path to the site logo for social media meta tags (fallback when post has no image)"
     )
+    date_format: DateFormat = Field(
+        description="Date format for displaying publication dates (short, medium, long, or full)"
+    )
+    translations: dict[str, Translations] = Field(
+        description="Translations for template text, keyed by language code"
+    )
+
+    @model_validator(mode="after")
+    def validate_translations_for_all_languages(self) -> "SiteConfig":
+        """
+        Validate that translations exist for all configured languages.
+        """
+        missing_languages = []
+        for lang in self.languages:
+            if lang not in self.translations:
+                missing_languages.append(lang)
+
+        if missing_languages:
+            langs_str = ", ".join(missing_languages)
+            raise ValueError(
+                f"Missing translations for language(s): {langs_str}. "
+                f"Please add [site.translations.{missing_languages[0]}] section in boumwave.toml"
+            )
+
+        return self
 
 
 class BoumWaveConfig(BaseModel):
