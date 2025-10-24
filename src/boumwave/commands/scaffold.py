@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+from importlib.resources import files
+
 from boumwave.config import load_config
 
 
@@ -39,8 +41,30 @@ def scaffold_command() -> None:
                 print(f"Error creating folder '{folder_path}': {e}", file=sys.stderr)
                 sys.exit(1)
 
+    # Copy default post template if it doesn't exist
+    template_destination = Path(template_folder) / config.paths.post_template
+    if template_destination.exists():
+        print(
+            f"⚠ Warning: Template '{template_destination}' already exists, skipping copy."
+        )
+    else:
+        try:
+            # Get default template from package resources
+            template_source = files("boumwave").joinpath("templates/example_post.html")
+            template_content = template_source.read_text(encoding="utf-8")
+
+            # Write to destination
+            template_destination.write_text(template_content, encoding="utf-8")
+            print(f"✓ Created template file: {template_destination}")
+        except Exception as e:
+            print(
+                f"Error creating template file '{template_destination}': {e}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
     print()
-    if created_folders:
+    if created_folders or not template_destination.exists():
         print("Scaffold completed! Your project structure is ready.")
     else:
         print("Scaffold completed! All folders already exist.")
