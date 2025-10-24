@@ -12,6 +12,11 @@ content_folder = "content"
 # This will also be used as the URL path segment (e.g., example.com/posts/)
 output_folder = "posts"
 
+# HTML template file used to generate posts
+# This file should be located in the template_folder
+# The markdown content will be rendered and injected into this template
+post_template = "post.html"
+
 [site]
 # Languages supported by your site
 # Examples:

@@ -16,6 +16,9 @@ class PathsConfig(BaseModel):
     output_folder: str = Field(
         description="Folder where generated posts will be output (also used in URLs)"
     )
+    post_template: str = Field(
+        description="HTML template file for generating posts (must be in template_folder)"
+    )
 
 
 class SiteConfig(BaseModel):
