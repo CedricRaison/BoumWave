@@ -57,32 +57,28 @@ def generate(post_name: str) -> None:
         # 4. Determine image for social media (first image or logo)
         image_path = first_image if first_image else Path(config.site.logo_path)
 
-        # 5. Build URLs
-        relative_url = f"/{config.paths.output_folder}/{post.lang}/{post.slug}"
-        full_url = f"{config.site.site_url}{relative_url}"
-
-        # 6. Create EnrichedPost model
+        # 5. Create EnrichedPost model (URLs are computed automatically)
         enriched_post = EnrichedPost(
             post=post,
-            full_url=full_url,
-            relative_url=relative_url,
             description=description,
             image=image_path,
             content_html=content_html,
-            site_config=config.site,
+            config=config,
         )
 
-        # 7. Render user template
+        # 6. Render user template
         template_path = Path(config.paths.template_folder) / config.paths.post_template
         rendered_html = render_template(template_path, enriched_post)
 
-        # 8. Generate meta tags
-        meta_tags = generate_meta_tags(post, full_url, image_path, description)
+        # 7. Generate meta tags
+        meta_tags = generate_meta_tags(enriched_post)
 
-        # 9. Inject meta tags and canonical into HTML
-        final_html = inject_meta_tags_and_canonical(rendered_html, meta_tags, full_url)
+        # 8. Inject meta tags and canonical into HTML
+        final_html = inject_meta_tags_and_canonical(
+            rendered_html, meta_tags, enriched_post.full_url
+        )
 
-        # 10. Write output file
+        # 9. Write output file
         output_path = (
             Path(config.paths.output_folder) / post.lang / post.slug / "index.html"
         )

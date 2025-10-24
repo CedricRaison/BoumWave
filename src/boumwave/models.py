@@ -3,9 +3,9 @@
 from datetime import date
 
 from babel.dates import format_date
-from pydantic import BaseModel, Field, FilePath, HttpUrl, computed_field
+from pydantic import BaseModel, Field, FilePath, computed_field
 
-from boumwave.config import SiteConfig
+from boumwave.config import BoumWaveConfig
 
 
 class Post(BaseModel):
@@ -57,12 +57,6 @@ class EnrichedPost(BaseModel):
     """
 
     post: Post = Field(..., description="Validated post front matter")
-    full_url: HttpUrl = Field(
-        ..., description="Complete URL (e.g., https://example.com/posts/fr/mon-slug)"
-    )
-    relative_url: str = Field(
-        ..., description="Relative URL path (e.g., /posts/fr/mon-slug)"
-    )
     description: str = Field(
         ..., description="SEO description (max 155 characters, extracted from content)"
     )
@@ -70,27 +64,45 @@ class EnrichedPost(BaseModel):
         ..., description="Path to image for social media (first image or logo)"
     )
     content_html: str = Field(..., description="Rendered HTML content from markdown")
-    site_config: SiteConfig = Field(
-        ..., description="Site configuration for accessing date format and translations"
-    )
+    config: BoumWaveConfig = Field(..., description="Complete BoumWave configuration")
+
+    @computed_field
+    @property
+    def relative_url(self) -> str:
+        """
+        Relative URL path for the post.
+
+        Example: /posts/fr/mon-slug
+        """
+        return f"/{self.config.paths.output_folder}/{self.post.lang}/{self.post.slug}"
+
+    @computed_field
+    @property
+    def full_url(self) -> str:
+        """
+        Complete URL for the post.
+
+        Example: https://example.com/posts/fr/mon-slug
+        """
+        return f"{str(self.config.site.site_url)}{self.relative_url}"
 
     @computed_field
     @property
     def published_on_date(self) -> str:
         """
         Complete publication message combining translation and formatted date.
-        Uses site_config.translations[lang].published_on and site_config.date_format.
+        Uses config.site.translations[lang].published_on and config.site.date_format.
 
         Example: "Published on October 24, 2025"
         """
         # Format the date according to config and language
         formatted_date = format_date(
             self.post.published_date,
-            format=self.site_config.date_format.value,
+            format=self.config.site.date_format.value,
             locale=self.post.lang,
         )
 
         # Get the translation for "Published on"
-        translation = self.site_config.translations[self.post.lang].published_on
+        translation = self.config.site.translations[self.post.lang].published_on
 
         return f"{translation} {formatted_date}"

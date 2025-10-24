@@ -5,7 +5,7 @@ from pathlib import Path
 import markdown
 from bs4 import BeautifulSoup
 
-from boumwave.models import Post
+from boumwave.models import EnrichedPost
 
 
 def extract_description(markdown_content: str, max_length: int = 155) -> str:
@@ -65,38 +65,34 @@ def extract_first_image(html_content: str) -> Path | None:
     return None
 
 
-def generate_meta_tags(
-    post: Post, full_url: str, image_path: Path, description: str
-) -> str:
+def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     """
     Generate all meta tags for SEO and social media.
 
     Args:
-        post: Validated Post model
-        full_url: Complete URL of the post
-        image_path: Path to the image for social media
-        description: SEO description (155 characters extracted from content)
+        enriched_post: EnrichedPost with all necessary metadata
 
     Returns:
         HTML string with all meta tags
     """
+    post = enriched_post.post
     meta_tags = f"""    <!-- SEO -->
-    <meta name="description" content="{description}">
+    <meta name="description" content="{enriched_post.description}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:title" content="{post.title}">
-    <meta property="og:description" content="{description}">
-    <meta property="og:url" content="{full_url}">
-    <meta property="og:image" content="{image_path}">
+    <meta property="og:description" content="{enriched_post.description}">
+    <meta property="og:url" content="{enriched_post.full_url}">
+    <meta property="og:image" content="{enriched_post.image}">
     <meta property="og:locale" content="{post.lang}">
     <meta property="article:published_time" content="{post.published_datetime_iso}">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{post.title}">
-    <meta name="twitter:description" content="{description}">
-    <meta name="twitter:image" content="{image_path}">"""
+    <meta name="twitter:description" content="{enriched_post.description}">
+    <meta name="twitter:image" content="{enriched_post.image}">"""
 
     return meta_tags
 
