@@ -27,6 +27,9 @@ class SiteConfig(BaseModel):
     languages: list[str] = Field(
         description="List of language codes supported by the site (e.g., ['en', 'fr'])"
     )
+    site_url: str = Field(
+        description="URL of the site (used for canonical links and Open Graph tags)"
+    )
     logo_path: str = Field(
         description="Path to the site logo for social media meta tags (fallback when post has no image)"
     )

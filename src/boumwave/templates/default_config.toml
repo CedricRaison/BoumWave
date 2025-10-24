@@ -25,6 +25,9 @@ post_template = "post.html"
 # Note: You don't need to write every post in every language
 languages = ["en"]
 
+# URL of your site (used for canonical links and social media meta tags)
+site_url = "https://example.com"
+
 # Path to your site's logo
 # This logo will be used for social media meta tags (Open Graph, Twitter Card)
 # when sharing articles that don't have their own image
