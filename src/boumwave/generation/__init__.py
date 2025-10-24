@@ -3,7 +3,7 @@
 from boumwave.generation.metadata import (
     extract_description,
     extract_first_image,
-    generate_meta_tags,
+    generate_seo_tags,
     inject_meta_tags_and_canonical,
 )
 from boumwave.generation.parsers import find_post_files, parse_post_file
@@ -16,7 +16,7 @@ __all__ = [
     "render_markdown",
     "extract_description",
     "extract_first_image",
-    "generate_meta_tags",
+    "generate_seo_tags",
     "inject_meta_tags_and_canonical",
     "render_template",
 ]

@@ -72,7 +72,7 @@ class EnrichedPost(BaseModel):
         """
         Relative URL path for the post.
 
-        Example: /posts/fr/mon-slug
+        Example: /posts/fr/my-slug
         """
         return f"/{self.config.paths.output_folder}/{self.post.lang}/{self.post.slug}"
 
@@ -82,7 +82,7 @@ class EnrichedPost(BaseModel):
         """
         Complete URL for the post.
 
-        Example: https://example.com/posts/fr/mon-slug
+        Example: https://example.com/posts/fr/my-slug
         """
         return f"{str(self.config.site.site_url)}{self.relative_url}"
 

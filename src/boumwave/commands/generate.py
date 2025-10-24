@@ -8,7 +8,7 @@ from boumwave.generation import (
     extract_description,
     extract_first_image,
     find_post_files,
-    generate_meta_tags,
+    generate_seo_tags,
     inject_meta_tags_and_canonical,
     parse_post_file,
     render_markdown,
@@ -70,12 +70,12 @@ def generate(post_name: str) -> None:
         template_path = Path(config.paths.template_folder) / config.paths.post_template
         rendered_html = render_template(template_path, enriched_post)
 
-        # 7. Generate meta tags
-        meta_tags = generate_meta_tags(enriched_post)
+        # 7. Generate SEO tags (meta tags + JSON-LD)
+        seo_tags = generate_seo_tags(enriched_post)
 
-        # 8. Inject meta tags and canonical into HTML
+        # 8. Inject SEO tags and canonical into HTML
         final_html = inject_meta_tags_and_canonical(
-            rendered_html, meta_tags, enriched_post.full_url
+            rendered_html, seo_tags, enriched_post.full_url
         )
 
         # 9. Write output file

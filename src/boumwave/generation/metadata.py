@@ -1,5 +1,6 @@
 """Metadata extraction and meta tag generation"""
 
+import json
 from pathlib import Path
 
 import markdown
@@ -67,13 +68,13 @@ def extract_first_image(html_content: str) -> Path | None:
 
 def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     """
-    Generate all meta tags for SEO and social media.
+    Generate Open Graph and Twitter Card meta tags.
 
     Args:
         enriched_post: EnrichedPost with all necessary metadata
 
     Returns:
-        HTML string with all meta tags
+        HTML string with meta tags
     """
     post = enriched_post.post
     meta_tags = f"""    <!-- SEO -->
@@ -95,6 +96,50 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     <meta name="twitter:image" content="{enriched_post.image}">"""
 
     return meta_tags
+
+
+def generate_json_ld(enriched_post: EnrichedPost) -> str:
+    """
+    Generate JSON-LD structured data for SEO.
+
+    Args:
+        enriched_post: EnrichedPost with all necessary metadata
+
+    Returns:
+        JSON-LD script tag as string
+    """
+    post = enriched_post.post
+
+    json_ld_data = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": post.title,
+        "datePublished": post.published_datetime_iso,
+        "url": enriched_post.full_url,
+        "image": str(enriched_post.image),
+        "description": enriched_post.description,
+        "inLanguage": post.lang,
+    }
+
+    json_str = json.dumps(json_ld_data, ensure_ascii=False, indent=2)
+
+    return f'    <script type="application/ld+json">\n{json_str}\n    </script>'
+
+
+def generate_seo_tags(enriched_post: EnrichedPost) -> str:
+    """
+    Generate all SEO elements (meta tags + JSON-LD).
+
+    Args:
+        enriched_post: EnrichedPost with all necessary metadata
+
+    Returns:
+        Combined HTML string with meta tags and JSON-LD script
+    """
+    meta_tags = generate_meta_tags(enriched_post)
+    json_ld = generate_json_ld(enriched_post)
+
+    return meta_tags + "\n\n" + json_ld
 
 
 def inject_meta_tags_and_canonical(
