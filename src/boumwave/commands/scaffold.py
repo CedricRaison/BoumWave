@@ -43,6 +43,8 @@ def scaffold_command() -> None:
 
     # Copy default post template if it doesn't exist
     template_destination = Path(template_folder) / config.paths.post_template
+    template_was_created = False
+
     if template_destination.exists():
         print(
             f"⚠ Warning: Template '{template_destination}' already exists, skipping copy."
@@ -56,6 +58,7 @@ def scaffold_command() -> None:
             # Write to destination
             template_destination.write_text(template_content, encoding="utf-8")
             print(f"✓ Created template file: {template_destination}")
+            template_was_created = True
         except Exception as e:
             print(
                 f"Error creating template file '{template_destination}': {e}",
@@ -64,7 +67,7 @@ def scaffold_command() -> None:
             sys.exit(1)
 
     print()
-    if created_folders or not template_destination.exists():
+    if created_folders or template_was_created:
         print("Scaffold completed! Your project structure is ready.")
     else:
         print("Scaffold completed! All folders already exist.")
