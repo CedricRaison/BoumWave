@@ -1,0 +1,32 @@
+<!--
+    This is a template for generating links to your blog posts.
+
+    When you run "bw generate my_post", BoumWave will:
+    1. Generate the full HTML page for your post (using post_template)
+    2. Generate an HTML snippet using this template (link_template)
+    3. Automatically add this snippet to your index.html
+
+    This allows you to build a list of your blog posts on your home page.
+
+    Available variables:
+    - {{ lang }}                    - Language code (e.g., "en", "fr")
+    - {{ title }}                   - Post title
+    - {{ relative_url }}            - Relative URL to the post (e.g., "/posts/en/my-slug")
+    - {{ published_datetime_iso }}  - ISO 8601 datetime (e.g., "2025-10-24T00:00:00Z")
+    - {{ published_on_date }}       - Formatted date using your config (e.g., "Published on October 24, 2025")
+
+    Multi-language tip:
+    If you write posts in multiple languages, we recommend adding a language-based class
+    (e.g., "en-lang", "fr-lang") to your post links. This way, you can use CSS or JavaScript
+    in your index.html to filter or display posts by language.
+    You're completely free to customize this as you wish!
+
+    Feel free to customize this template with your own HTML structure and CSS classes!
+-->
+
+<div class="post-link {{ lang }}-lang">
+    <a href="{{ relative_url }}">
+        <h2>{{ title }}</h2>
+        <time datetime="{{ published_datetime_iso }}">{{ published_on_date }}</time>
+    </a>
+</div>

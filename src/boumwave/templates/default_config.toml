@@ -17,6 +17,12 @@ output_folder = "posts"
 # The markdown content will be rendered and injected into this template
 post_template = "post.html"
 
+# HTML template file used to generate links to posts
+# This file should be located in the template_folder
+# When you generate a post, BoumWave will create an HTML snippet
+# that will be automatically added to your index.html
+link_template = "link.html"
+
 # HTML file for the blog's index/home page
 # This file will be created at the root of your project if it doesn't exist
 index_template = "index.html"

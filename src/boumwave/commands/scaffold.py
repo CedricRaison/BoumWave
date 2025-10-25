@@ -66,6 +66,31 @@ def scaffold_command() -> None:
             )
             sys.exit(1)
 
+    # Copy default link template if it doesn't exist
+    link_template_destination = Path(template_folder) / config.paths.link_template
+    link_template_was_created = False
+
+    if link_template_destination.exists():
+        print(
+            f"⚠ Warning: Template '{link_template_destination}' already exists, skipping copy."
+        )
+    else:
+        try:
+            # Get default link template from package resources
+            link_template_source = files("boumwave").joinpath("templates/example_link.html")
+            link_template_content = link_template_source.read_text(encoding="utf-8")
+
+            # Write to destination
+            link_template_destination.write_text(link_template_content, encoding="utf-8")
+            print(f"✓ Created template file: {link_template_destination}")
+            link_template_was_created = True
+        except Exception as e:
+            print(
+                f"Error creating template file '{link_template_destination}': {e}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
     # Copy default index template if it doesn't exist (at project root)
     index_destination = Path(config.paths.index_template)
     index_was_created = False
@@ -92,7 +117,7 @@ def scaffold_command() -> None:
             sys.exit(1)
 
     print()
-    if created_folders or post_template_was_created or index_was_created:
+    if created_folders or post_template_was_created or link_template_was_created or index_was_created:
         print("Scaffold completed! Your project structure is ready.")
     else:
         print("Scaffold completed! All folders and files already exist.")
