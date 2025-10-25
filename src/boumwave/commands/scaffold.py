@@ -8,6 +8,43 @@ from importlib.resources import files
 from boumwave.config import load_config
 
 
+def _copy_template_file(
+    source_filename: str, destination_path: Path, file_type: str = "file"
+) -> bool:
+    """
+    Copy a template file from package resources to destination.
+
+    Args:
+        source_filename: Name of the file in the templates/ directory (e.g., "example_post.html")
+        destination_path: Path where the file should be copied
+        file_type: Description of the file type for user messages (e.g., "template file", "index file")
+
+    Returns:
+        True if file was created, False if it already existed
+
+    Raises:
+        SystemExit: If an error occurs during file creation
+    """
+    if destination_path.exists():
+        print(
+            f"Warning: {file_type.capitalize()} '{destination_path}' already exists, skipping copy."
+        )
+        return False
+
+    try:
+        # Get template from package resources
+        source = files("boumwave").joinpath(f"templates/{source_filename}")
+        content = source.read_text(encoding="utf-8")
+
+        # Write to destination
+        destination_path.write_text(content, encoding="utf-8")
+        print(f"✓ Created {file_type}: {destination_path}")
+        return True
+    except Exception as e:
+        print(f"Error creating {file_type} '{destination_path}': {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def scaffold_command() -> None:
     """
     Scaffold command: creates the folder structure based on boumwave.toml.
@@ -31,7 +68,7 @@ def scaffold_command() -> None:
     for folder_type, folder_path in folders_to_create:
         path = Path(folder_path)
         if path.exists():
-            print(f"⚠ Warning: '{folder_path}' already exists, skipping creation.")
+            print(f"Warning: '{folder_path}' folder already exists, skipping creation.")
         else:
             try:
                 path.mkdir(parents=True, exist_ok=False)
@@ -41,83 +78,32 @@ def scaffold_command() -> None:
                 print(f"Error creating folder '{folder_path}': {e}", file=sys.stderr)
                 sys.exit(1)
 
-    # Copy default post template if it doesn't exist
+    # Copy template files if they don't exist
+    files_created = []
+
+    # Post template
     post_template_destination = Path(template_folder) / config.paths.post_template
-    post_template_was_created = False
-
-    if post_template_destination.exists():
-        print(
-            f"⚠ Warning: Template '{post_template_destination}' already exists, skipping copy."
+    files_created.append(
+        _copy_template_file(
+            "example_post.html", post_template_destination, "template file"
         )
-    else:
-        try:
-            # Get default template from package resources
-            template_source = files("boumwave").joinpath("templates/example_post.html")
-            template_content = template_source.read_text(encoding="utf-8")
+    )
 
-            # Write to destination
-            post_template_destination.write_text(template_content, encoding="utf-8")
-            print(f"✓ Created template file: {post_template_destination}")
-            post_template_was_created = True
-        except Exception as e:
-            print(
-                f"Error creating template file '{post_template_destination}': {e}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-    # Copy default link template if it doesn't exist
+    # Link template
     link_template_destination = Path(template_folder) / config.paths.link_template
-    link_template_was_created = False
-
-    if link_template_destination.exists():
-        print(
-            f"⚠ Warning: Template '{link_template_destination}' already exists, skipping copy."
+    files_created.append(
+        _copy_template_file(
+            "example_link.html", link_template_destination, "template file"
         )
-    else:
-        try:
-            # Get default link template from package resources
-            link_template_source = files("boumwave").joinpath("templates/example_link.html")
-            link_template_content = link_template_source.read_text(encoding="utf-8")
+    )
 
-            # Write to destination
-            link_template_destination.write_text(link_template_content, encoding="utf-8")
-            print(f"✓ Created template file: {link_template_destination}")
-            link_template_was_created = True
-        except Exception as e:
-            print(
-                f"Error creating template file '{link_template_destination}': {e}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-    # Copy default index template if it doesn't exist (at project root)
+    # Index file (at project root)
     index_destination = Path(config.paths.index_template)
-    index_was_created = False
+    files_created.append(
+        _copy_template_file("example_index.html", index_destination, "index file")
+    )
 
-    if index_destination.exists():
-        print(
-            f"⚠ Warning: Index file '{index_destination}' already exists, skipping copy."
-        )
-    else:
-        try:
-            # Get default index template from package resources
-            index_source = files("boumwave").joinpath("templates/example_index.html")
-            index_content = index_source.read_text(encoding="utf-8")
-
-            # Write to destination (at project root)
-            index_destination.write_text(index_content, encoding="utf-8")
-            print(f"✓ Created index file: {index_destination}")
-            index_was_created = True
-        except Exception as e:
-            print(
-                f"Error creating index file '{index_destination}': {e}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-
-    print()
-    if created_folders or post_template_was_created or link_template_was_created or index_was_created:
+    if created_folders or any(files_created):
         print("Scaffold completed! Your project structure is ready.")
     else:
         print("Scaffold completed! All folders and files already exist.")
