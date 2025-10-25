@@ -59,6 +59,12 @@ class SiteConfig(BaseModel):
     date_format: DateFormat = Field(
         description="Date format for displaying publication dates (short, medium, long, or full)"
     )
+    posts_start_marker: str = Field(
+        description="HTML comment marker to indicate where post list starts in index.html"
+    )
+    posts_end_marker: str = Field(
+        description="HTML comment marker to indicate where post list ends in index.html"
+    )
     translations: dict[str, Translations] = Field(
         description="Translations for template text, keyed by language code"
     )

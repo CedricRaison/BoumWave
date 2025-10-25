@@ -1,5 +1,6 @@
 """Generation module for converting markdown to HTML"""
 
+from boumwave.generation.index_manager import update_index
 from boumwave.generation.metadata import (
     extract_description,
     extract_first_image,
@@ -19,4 +20,5 @@ __all__ = [
     "generate_seo_tags",
     "inject_meta_tags_and_canonical",
     "render_template",
+    "update_index",
 ]

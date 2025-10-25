@@ -38,6 +38,13 @@ languages = ["en"]
 # URL of your site (used for canonical links and social media meta tags)
 site_url = "https://example.com"
 
+# Post list markers for index.html
+# BoumWave will automatically insert generated post links between these markers in your index.html
+# The zone between these markers will be completely regenerated when you run "bw generate"
+# If you bring your own index.html, make sure to add these markers where you want your post list to appear
+posts_start_marker = "<!-- BOUMWAVE_POSTS_START -->"
+posts_end_marker = "<!-- BOUMWAVE_POSTS_END -->"
+
 # Path to your site's logo
 # This logo will be used for social media meta tags (Open Graph, Twitter Card)
 # when sharing articles that don't have their own image

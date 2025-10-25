@@ -35,6 +35,48 @@ class Post(BaseModel):
         """
         return f"{self.published_date}T00:00:00Z"
 
+    def get_relative_url(self, config: BoumWaveConfig) -> str:
+        """
+        Calculate the relative URL path for this post.
+
+        Args:
+            config: BoumWave configuration
+
+        Returns:
+            Relative URL (e.g., "/posts/en/my-slug")
+        """
+        return f"/{config.paths.output_folder}/{self.lang}/{self.slug}"
+
+    def get_full_url(self, config: BoumWaveConfig) -> str:
+        """
+        Calculate the complete URL for this post.
+
+        Args:
+            config: BoumWave configuration
+
+        Returns:
+            Full URL (e.g., "https://example.com/posts/en/my-slug")
+        """
+        return f"{str(config.site.site_url)}{self.get_relative_url(config)}"
+
+    def get_published_on_date(self, config: BoumWaveConfig) -> str:
+        """
+        Get the localized publication message.
+
+        Args:
+            config: BoumWave configuration
+
+        Returns:
+            Formatted message (e.g., "Published on October 24, 2025")
+        """
+        formatted_date = format_date(
+            self.published_date,
+            format=config.site.date_format.value,
+            locale=self.lang,
+        )
+        translation = config.site.translations[self.lang].published_on
+        return f"{translation} {formatted_date}"
+
     class Config:
         """Pydantic configuration"""
 
@@ -74,7 +116,7 @@ class EnrichedPost(BaseModel):
 
         Example: /posts/fr/my-slug
         """
-        return f"/{self.config.paths.output_folder}/{self.post.lang}/{self.post.slug}"
+        return self.post.get_relative_url(self.config)
 
     @computed_field
     @property
@@ -84,7 +126,7 @@ class EnrichedPost(BaseModel):
 
         Example: https://example.com/posts/fr/my-slug
         """
-        return f"{str(self.config.site.site_url)}{self.relative_url}"
+        return self.post.get_full_url(self.config)
 
     @computed_field
     @property
@@ -95,14 +137,4 @@ class EnrichedPost(BaseModel):
 
         Example: "Published on October 24, 2025"
         """
-        # Format the date according to config and language
-        formatted_date = format_date(
-            self.post.published_date,
-            format=self.config.site.date_format.value,
-            locale=self.post.lang,
-        )
-
-        # Get the translation for "Published on"
-        translation = self.config.site.translations[self.post.lang].published_on
-
-        return f"{translation} {formatted_date}"
+        return self.post.get_published_on_date(self.config)

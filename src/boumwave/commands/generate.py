@@ -13,6 +13,7 @@ from boumwave.generation import (
     parse_post_file,
     render_markdown,
     render_template,
+    update_index,
 )
 from boumwave.models import EnrichedPost
 
@@ -89,3 +90,8 @@ def generate(post_name: str) -> None:
         generated_count += 1
 
     print(f"\n✓ Successfully generated {generated_count} post(s) for '{post_name}'")
+
+    # Update index.html with all posts
+    print("\nUpdating index.html...")
+    update_index(config)
+    print("✓ Updated index.html with post list")
