@@ -105,57 +105,24 @@ def update_index(config: BoumWaveConfig) -> None:
 
     This function:
     1. Reads the index.html file
-    2. Verifies that start/end markers exist
-    3. Collects all posts from content folder
-    4. Generates HTML for all post links (sorted by date)
-    5. Replaces content between markers
-    6. Saves the updated index.html
+    2. Collects all posts from content folder
+    3. Generates HTML for all post links (sorted by date)
+    4. Replaces content between markers
+    5. Saves the updated index.html
 
     Args:
         config: BoumWave configuration
 
-    Raises:
-        SystemExit: If index.html not found or markers not found
+    Note:
+        Assumes environment has been validated (index.html and markers exist).
+        Should be called after validate_environment() in generate command.
     """
     index_path = Path(config.paths.index_template)
-
-    # Check if index.html exists
-    if not index_path.exists():
-        print(f"Error: Index file not found: {index_path}", file=sys.stderr)
-        print(
-            "Run 'bw scaffold' to create the index file, or create it manually.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    # Read index.html
-    try:
-        index_content = index_path.read_text(encoding="utf-8")
-    except Exception as e:
-        print(f"Error reading index file '{index_path}': {e}", file=sys.stderr)
-        sys.exit(1)
-
-    # Check if markers exist
     start_marker = config.site.posts_start_marker
     end_marker = config.site.posts_end_marker
 
-    if start_marker not in index_content:
-        print(f"Error: Start marker not found in {index_path}", file=sys.stderr)
-        print(f"Expected marker: {start_marker}", file=sys.stderr)
-        print(
-            "Add this marker to your index.html where you want the post list to appear.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    if end_marker not in index_content:
-        print(f"Error: End marker not found in {index_path}", file=sys.stderr)
-        print(f"Expected marker: {end_marker}", file=sys.stderr)
-        print(
-            "Add this marker to your index.html where you want the post list to end.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    # Read index.html
+    index_content = index_path.read_text(encoding="utf-8")
 
     # Collect all posts
     posts = collect_all_posts()
