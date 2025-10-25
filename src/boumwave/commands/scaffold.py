@@ -125,6 +125,12 @@ def _scaffold_impl() -> None:
         _copy_template_file("example_index.html", index_destination, "index file")
     )
 
+    # Sitemap file (at project root)
+    sitemap_destination = Path(config.paths.sitemap_template)
+    files_created.append(
+        _copy_template_file("example_sitemap.xml", sitemap_destination, "sitemap file")
+    )
+
     if created_folders or any(files_created):
         print("Scaffold completed! Your project structure is ready.")
     else:

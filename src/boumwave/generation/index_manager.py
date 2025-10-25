@@ -5,59 +5,22 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from jinja2 import Environment, FileSystemLoader
 
-from boumwave.config import BoumWaveConfig, load_config
+from boumwave.config import get_config
 from boumwave.exceptions import (
-    BoumWaveError,
     FileCreationError,
     TemplateNotFoundError,
     TemplateRenderError,
 )
-from boumwave.generation.parsers import parse_post_file
+from boumwave.generation.parsers import collect_all_posts
 from boumwave.models import Post
 
 
-def collect_all_posts() -> list[Post]:
-    """
-    Collect all posts from all subfolders in the content directory.
-
-    Returns:
-        List of all Post objects found in content folder
-    """
-    config = load_config()
-    content_folder = Path(config.paths.content_folder)
-    posts = []
-
-    # Check if content folder exists
-    if not content_folder.exists():
-        return posts
-
-    # Iterate through all subdirectories in content folder
-    for post_folder in content_folder.iterdir():
-        if not post_folder.is_dir():
-            continue
-
-        # Find all .md files in this post folder
-        md_files = list(post_folder.glob("*.md"))
-
-        # Parse each markdown file
-        for md_file in md_files:
-            try:
-                post, _ = parse_post_file(md_file)
-                posts.append(post)
-            except BoumWaveError:
-                # Skip files that fail to parse (will be caught in generate command)
-                continue
-
-    return posts
-
-
-def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
+def render_post_links(posts: list[Post]) -> str:
     """
     Generate HTML for all post links using the link template.
 
     Args:
         posts: List of Post objects
-        config: BoumWave configuration
 
     Returns:
         HTML string with all post links, sorted by date (most recent first)
@@ -66,6 +29,7 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
         TemplateNotFoundError: If link template cannot be loaded
         TemplateRenderError: If template rendering fails
     """
+    config = get_config()
     # Sort posts by date, most recent first
     sorted_posts = sorted(posts, key=lambda p: p.published_date, reverse=True)
 
@@ -110,7 +74,7 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
     return "\n".join(rendered_links)
 
 
-def update_index(config: BoumWaveConfig) -> None:
+def update_index() -> None:
     """
     Update index.html with the complete list of blog posts.
 
@@ -121,13 +85,11 @@ def update_index(config: BoumWaveConfig) -> None:
     4. Replaces content between markers
     5. Saves the updated index.html
 
-    Args:
-        config: BoumWave configuration
-
     Note:
         Assumes environment has been validated (index.html and markers exist).
         Should be called after validate_environment() in generate command.
     """
+    config = get_config()
     index_path = Path(config.paths.index_template)
     start_marker = config.site.posts_start_marker
     end_marker = config.site.posts_end_marker
@@ -140,7 +102,7 @@ def update_index(config: BoumWaveConfig) -> None:
 
     # Generate post links HTML
     if posts:
-        post_links_html = render_post_links(posts, config)
+        post_links_html = render_post_links(posts)
     else:
         post_links_html = "<!-- No posts yet -->"
 

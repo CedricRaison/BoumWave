@@ -5,6 +5,7 @@ import sys
 
 from boumwave.commands import (
     generate_command,
+    generate_sitemap_command,
     init_command,
     new_post_command,
     scaffold_command,
@@ -42,6 +43,11 @@ def main() -> None:
         "post_name", help="Name of the post folder to generate"
     )
 
+    # 'generate_sitemap' subcommand
+    subparsers.add_parser(
+        "generate_sitemap", help="Generate sitemap.xml with all blog post URLs"
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -59,6 +65,8 @@ def main() -> None:
         new_post_command(args.title)
     elif args.command == "generate":
         generate_command(args.post_name)
+    elif args.command == "generate_sitemap":
+        generate_sitemap_command()
 
 
 if __name__ == "__main__":

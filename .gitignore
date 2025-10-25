@@ -16,4 +16,5 @@ content/
 /templates/
 posts/
 index.html
+sitemap.xml
 CLAUDE.md

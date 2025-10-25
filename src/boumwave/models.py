@@ -61,7 +61,7 @@ class Post(BaseModel):
         Returns:
             Full URL (e.g., "https://example.com/posts/en/my-slug")
         """
-        return f"{str(config.site.site_url)}{self.get_relative_url(config)}"
+        return f"{config.site.site_url_base}{self.get_relative_url(config)}"
 
     def get_published_on_date(self, config: BoumWaveConfig) -> str:
         """

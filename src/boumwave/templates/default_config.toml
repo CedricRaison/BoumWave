@@ -27,6 +27,10 @@ link_template = "link.html"
 # This file will be created at the root of your project if it doesn't exist
 index_template = "index.html"
 
+# XML file for the sitemap
+# This file will be created at the root of your project if it doesn't exist
+sitemap_template = "sitemap.xml"
+
 [site]
 # Languages supported by your site
 # Examples:
@@ -36,7 +40,7 @@ index_template = "index.html"
 languages = ["en"]
 
 # URL of your site (used for canonical links and social media meta tags)
-site_url = "https://example.com"
+site_url = "https://example.com/"
 
 # Post list markers for index.html
 # BoumWave will automatically insert generated post links between these markers in your index.html
@@ -44,6 +48,13 @@ site_url = "https://example.com"
 # If you bring your own index.html, make sure to add these markers where you want your post list to appear
 posts_start_marker = "<!-- BOUMWAVE_POSTS_START -->"
 posts_end_marker = "<!-- BOUMWAVE_POSTS_END -->"
+
+# Sitemap markers for sitemap.xml
+# BoumWave will automatically insert blog post URLs between these markers in your sitemap.xml
+# The zone between these markers will be regenerated when you run "bw generate_sitemap"
+# You can add your own custom URLs (e.g., /my-projects.html) outside these markers
+sitemap_start_marker = "<!-- BOUMWAVE_START -->"
+sitemap_end_marker = "<!-- BOUMWAVE_END -->"
 
 # Path to your site's logo
 # This logo will be used for social media meta tags (Open Graph, Twitter Card)

@@ -4,7 +4,14 @@ import tomllib
 from enum import Enum
 from pathlib import Path
 
-from pydantic import BaseModel, Field, HttpUrl, ValidationError, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    HttpUrl,
+    ValidationError,
+    computed_field,
+    model_validator,
+)
 
 from boumwave.exceptions import ConfigNotFoundError, ConfigValidationError
 
@@ -43,6 +50,9 @@ class PathsConfig(BaseModel):
     index_template: str = Field(
         description="HTML file for the blog's index/home page (created at project root)"
     )
+    sitemap_template: str = Field(
+        description="XML file for the sitemap (created at project root)"
+    )
 
 
 class SiteConfig(BaseModel):
@@ -66,9 +76,21 @@ class SiteConfig(BaseModel):
     posts_end_marker: str = Field(
         description="HTML comment marker to indicate where post list ends in index.html"
     )
+    sitemap_start_marker: str = Field(
+        description="XML comment marker to indicate where BoumWave posts start in sitemap.xml"
+    )
+    sitemap_end_marker: str = Field(
+        description="XML comment marker to indicate where BoumWave posts end in sitemap.xml"
+    )
     translations: dict[str, Translations] = Field(
         description="Translations for template text, keyed by language code"
     )
+
+    @computed_field
+    @property
+    def site_url_base(self) -> str:
+        """Site URL without trailing slash (for URL concatenation)."""
+        return str(self.site_url).rstrip("/")
 
     @model_validator(mode="after")
     def validate_translations_for_all_languages(self) -> "SiteConfig":
@@ -140,3 +162,27 @@ def load_config() -> BoumWaveConfig:
             message="\n".join(errors),
             hint="Review your boumwave.toml file and fix the above issues",
         ) from e
+
+
+# Global config cache
+_config: BoumWaveConfig | None = None
+
+
+def get_config() -> BoumWaveConfig:
+    """
+    Get or load configuration (cached after first call).
+
+    This function loads the configuration once and caches it for subsequent calls,
+    avoiding multiple file reads and parsing operations.
+
+    Returns:
+        Cached or newly loaded BoumWaveConfig object
+
+    Raises:
+        ConfigNotFoundError: If the config file doesn't exist
+        ConfigValidationError: If the config file is invalid
+    """
+    global _config
+    if _config is None:
+        _config = load_config()
+    return _config
