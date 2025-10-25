@@ -6,6 +6,7 @@ from pathlib import Path
 from importlib.resources import files
 
 from boumwave.config import load_config
+from boumwave.exceptions import BoumWaveError, FileCreationError
 
 
 def _copy_template_file(
@@ -23,7 +24,7 @@ def _copy_template_file(
         True if file was created, False if it already existed
 
     Raises:
-        SystemExit: If an error occurs during file creation
+        FileCreationError: If an error occurs during file creation
     """
     if destination_path.exists():
         print(
@@ -41,13 +42,32 @@ def _copy_template_file(
         print(f"✓ Created {file_type}: {destination_path}")
         return True
     except Exception as e:
-        print(f"Error creating {file_type} '{destination_path}': {e}", file=sys.stderr)
-        sys.exit(1)
+        raise FileCreationError(
+            message=f"Error creating {file_type} '{destination_path}': {e}"
+        ) from e
 
 
 def scaffold_command() -> None:
     """
     Scaffold command: creates the folder structure based on boumwave.toml.
+    CLI wrapper that handles exceptions.
+    """
+    try:
+        _scaffold_impl()
+    except BoumWaveError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        if e.hint:
+            print(f"Hint: {e.hint}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _scaffold_impl() -> None:
+    """
+    Scaffold command implementation: creates the folder structure.
+    Raises exceptions instead of calling sys.exit().
     """
     # Load and validate configuration
     config = load_config()
@@ -75,8 +95,10 @@ def scaffold_command() -> None:
                 print(f"✓ Created {folder_type} folder: {folder_path}")
                 created_folders.append(folder_path)
             except Exception as e:
-                print(f"Error creating folder '{folder_path}': {e}", file=sys.stderr)
-                sys.exit(1)
+                raise FileCreationError(
+                    message=f"Error creating folder '{folder_path}': {e}",
+                    hint="Check file permissions and disk space",
+                ) from e
 
     # Copy template files if they don't exist
     files_created = []

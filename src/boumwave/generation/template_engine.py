@@ -1,10 +1,11 @@
 """Jinja2 template rendering"""
 
-import sys
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+from jinja2 import Environment, FileSystemLoader
+from jinja2 import TemplateNotFound as Jinja2TemplateNotFound
 
+from boumwave.exceptions import TemplateNotFoundError, TemplateRenderError
 from boumwave.models import EnrichedPost
 
 
@@ -20,7 +21,8 @@ def render_template(template_path: Path, enriched_post: EnrichedPost) -> str:
         Rendered HTML string
 
     Raises:
-        SystemExit: If template file is not found or rendering fails
+        TemplateNotFoundError: If template file is not found
+        TemplateRenderError: If rendering fails
     """
     # Setup Jinja2 environment
     template_dir = template_path.parent
@@ -29,12 +31,16 @@ def render_template(template_path: Path, enriched_post: EnrichedPost) -> str:
     try:
         env = Environment(loader=FileSystemLoader(template_dir))
         template = env.get_template(template_name)
-    except TemplateNotFound:
-        print(f"Error: Template file not found: {template_path}", file=sys.stderr)
-        sys.exit(1)
+    except Jinja2TemplateNotFound:
+        raise TemplateNotFoundError(
+            message=f"Template file not found: {template_path}",
+            hint="Run 'bw scaffold' to create it",
+        )
     except Exception as e:
-        print(f"Error loading template '{template_path}': {e}", file=sys.stderr)
-        sys.exit(1)
+        raise TemplateRenderError(
+            message=f"Error loading template '{template_path}': {e}",
+            hint="Check that the template file is valid and readable",
+        ) from e
 
     # Prepare context for template
     context = {
@@ -49,5 +55,7 @@ def render_template(template_path: Path, enriched_post: EnrichedPost) -> str:
     try:
         return template.render(context)
     except Exception as e:
-        print(f"Error rendering template '{template_path}': {e}", file=sys.stderr)
-        sys.exit(1)
+        raise TemplateRenderError(
+            message=f"Error rendering template '{template_path}': {e}",
+            hint="Check your template syntax and variables",
+        ) from e

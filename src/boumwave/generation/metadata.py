@@ -6,6 +6,7 @@ from pathlib import Path
 import markdown
 from bs4 import BeautifulSoup
 
+from boumwave.exceptions import TemplateError
 from boumwave.models import EnrichedPost
 
 
@@ -157,13 +158,16 @@ def inject_meta_tags_and_canonical(
         HTML with injected meta tags and canonical link
 
     Raises:
-        ValueError: If no <head> tag is found in the HTML
+        TemplateError: If no <head> tag is found in the HTML
     """
     soup = BeautifulSoup(html, "html.parser")
     head = soup.find("head")
 
     if not head:
-        raise ValueError("No <head> tag found in template")
+        raise TemplateError(
+            message="No <head> tag found in template",
+            hint="Add a <head> section to your HTML template",
+        )
 
     # Create and insert canonical link
     canonical_tag = soup.new_tag("link", rel="canonical", href=canonical_url)

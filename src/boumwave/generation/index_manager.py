@@ -1,12 +1,17 @@
 """Index.html management for post list generation"""
 
-import sys
 from pathlib import Path
 
 from bs4 import BeautifulSoup
 from jinja2 import Environment, FileSystemLoader
 
 from boumwave.config import BoumWaveConfig, load_config
+from boumwave.exceptions import (
+    BoumWaveError,
+    FileCreationError,
+    TemplateNotFoundError,
+    TemplateRenderError,
+)
 from boumwave.generation.parsers import parse_post_file
 from boumwave.models import Post
 
@@ -39,8 +44,8 @@ def collect_all_posts() -> list[Post]:
             try:
                 post, _ = parse_post_file(md_file)
                 posts.append(post)
-            except SystemExit:
-                # Skip files that fail to parse (error already printed by parse_post_file)
+            except BoumWaveError:
+                # Skip files that fail to parse (will be caught in generate command)
                 continue
 
     return posts
@@ -58,7 +63,8 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
         HTML string with all post links, sorted by date (most recent first)
 
     Raises:
-        SystemExit: If link template cannot be loaded or rendered
+        TemplateNotFoundError: If link template cannot be loaded
+        TemplateRenderError: If template rendering fails
     """
     # Sort posts by date, most recent first
     sorted_posts = sorted(posts, key=lambda p: p.published_date, reverse=True)
@@ -71,8 +77,10 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
         env = Environment(loader=FileSystemLoader(template_folder))
         template = env.get_template(template_name)
     except Exception as e:
-        print(f"Error loading link template '{template_name}': {e}", file=sys.stderr)
-        sys.exit(1)
+        raise TemplateNotFoundError(
+            message=f"Error loading link template '{template_name}': {e}",
+            hint="Run 'bw scaffold' to create it",
+        ) from e
 
     # Render each post link
     rendered_links = []
@@ -92,8 +100,10 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
             rendered_link = template.render(context)
             rendered_links.append(rendered_link)
         except Exception as e:
-            print(f"Error rendering link for post '{post.title}': {e}", file=sys.stderr)
-            continue
+            raise TemplateRenderError(
+                message=f"Error rendering link for post '{post.title}': {e}",
+                hint="Check the link template syntax and that all required variables are available",
+            ) from e
 
     # Join all links with newlines
     return "\n".join(rendered_links)
@@ -154,5 +164,7 @@ def update_index(config: BoumWaveConfig) -> None:
     try:
         index_path.write_text(formatted_html, encoding="utf-8")
     except Exception as e:
-        print(f"Error writing index file '{index_path}': {e}", file=sys.stderr)
-        sys.exit(1)
+        raise FileCreationError(
+            message=f"Error writing index file '{index_path}': {e}",
+            hint="Check file permissions and disk space",
+        ) from e

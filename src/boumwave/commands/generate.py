@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from boumwave.config import BoumWaveConfig, load_config
+from boumwave.exceptions import BoumWaveError, EnvironmentValidationError
 from boumwave.generation import (
     extract_description,
     extract_first_image,
@@ -28,7 +29,7 @@ def validate_environment(config: BoumWaveConfig, post_name: str) -> None:
         post_name: Name of the post folder to generate
 
     Raises:
-        SystemExit: If any validation fails
+        EnvironmentValidationError: If any validation fails
     """
     errors = []
 
@@ -93,17 +94,35 @@ def validate_environment(config: BoumWaveConfig, post_name: str) -> None:
     elif not post_folder.is_dir():
         errors.append(f"Not a directory: {post_folder}")
 
-    # If any errors, print them all and exit
+    # If any errors, raise exception with all errors
     if errors:
-        print("Error: Environment validation failed\n", file=sys.stderr)
-        for error in errors:
-            print(error, file=sys.stderr)
-        sys.exit(1)
+        raise EnvironmentValidationError(["Environment validation failed\n"] + errors)
 
 
 def generate(post_name: str) -> None:
     """
     Generate HTML for a given post in all available languages.
+    CLI wrapper that handles exceptions.
+
+    Args:
+        post_name: Name of the post folder (e.g., "my_amazing_post")
+    """
+    try:
+        _generate_impl(post_name)
+    except BoumWaveError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        if e.hint:
+            print(f"Hint: {e.hint}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _generate_impl(post_name: str) -> None:
+    """
+    Generate HTML for a given post in all available languages.
+    Raises exceptions instead of calling sys.exit().
 
     Args:
         post_name: Name of the post folder (e.g., "my_amazing_post")

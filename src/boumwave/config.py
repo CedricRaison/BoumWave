@@ -1,11 +1,12 @@
 """Configuration management for BoumWave"""
 
-import sys
 import tomllib
 from enum import Enum
 from pathlib import Path
 
 from pydantic import BaseModel, Field, HttpUrl, ValidationError, model_validator
+
+from boumwave.exceptions import ConfigNotFoundError, ConfigValidationError
 
 
 class DateFormat(str, Enum):
@@ -104,35 +105,38 @@ def load_config() -> BoumWaveConfig:
         Validated BoumWaveConfig object
 
     Raises:
-        SystemExit: If the config file doesn't exist or is invalid
+        ConfigNotFoundError: If the config file doesn't exist
+        ConfigValidationError: If the config file is invalid
     """
     config_file = Path("boumwave.toml")
 
     # Check if config file exists
     if not config_file.exists():
-        print("Error: boumwave.toml not found.", file=sys.stderr)
-        print("Run 'bw init' first to create the configuration file.", file=sys.stderr)
-        sys.exit(1)
+        raise ConfigNotFoundError()
 
     # Read and parse TOML file
     try:
         with open(config_file, "rb") as f:
             config_data = tomllib.load(f)
     except Exception as e:
-        print(f"Error reading configuration file: {e}", file=sys.stderr)
-        sys.exit(1)
+        raise ConfigValidationError(
+            message=f"Error reading configuration file: {e}",
+            hint="Check that boumwave.toml is a valid TOML file",
+        ) from e
 
     # Validate with Pydantic
     try:
         return BoumWaveConfig.model_validate(config_data)
     except ValidationError as e:
-        print("Error: Invalid configuration in boumwave.toml", file=sys.stderr)
+        errors = ["Invalid configuration in boumwave.toml"]
         for error in e.errors():
             field_name = error["loc"][-1]  # Get the last part of the path
             if error["type"] == "missing":
-                print(f"  Missing required config: {field_name}", file=sys.stderr)
+                errors.append(f"  Missing required config: {field_name}")
             else:
-                print(
-                    f"  Invalid config '{field_name}': {error['msg']}", file=sys.stderr
-                )
-        sys.exit(1)
+                errors.append(f"  Invalid config '{field_name}': {error['msg']}")
+
+        raise ConfigValidationError(
+            message="\n".join(errors),
+            hint="Review your boumwave.toml file and fix the above issues",
+        ) from e

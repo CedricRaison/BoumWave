@@ -7,6 +7,12 @@ from importlib.resources import files
 from pathlib import Path
 
 from boumwave.config import load_config
+from boumwave.exceptions import (
+    BoumWaveError,
+    FileAlreadyExistsError,
+    FileCreationError,
+    ValidationError,
+)
 
 
 def slugify(text: str) -> str:
@@ -59,6 +65,27 @@ def filesify(text: str) -> str:
 def new_post_command(title: str) -> None:
     """
     New post command: creates a new post with files for all configured languages.
+    CLI wrapper that handles exceptions.
+
+    Args:
+        title: Title of the new post
+    """
+    try:
+        _new_post_impl(title)
+    except BoumWaveError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        if e.hint:
+            print(f"Hint: {e.hint}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def _new_post_impl(title: str) -> None:
+    """
+    New post command implementation: creates a new post with files for all configured languages.
+    Raises exceptions instead of calling sys.exit().
 
     Args:
         title: Title of the new post
@@ -74,29 +101,34 @@ def new_post_command(title: str) -> None:
     # Generate slug from title (for URLs and front matter)
     slug = slugify(title)
     if not slug:
-        print("Error: Could not generate a valid slug from the title.", file=sys.stderr)
-        sys.exit(1)
+        raise ValidationError(
+            errors=["Could not generate a valid slug from the title."],
+            hint="Use a title with at least some alphanumeric characters",
+        )
 
     # Generate filesystem-friendly name (for folders and files)
     fs_name = filesify(title)
     if not fs_name:
-        print(
-            "Error: Could not generate a valid filename from the title.",
-            file=sys.stderr,
+        raise ValidationError(
+            errors=["Could not generate a valid filename from the title."],
+            hint="Use a title with at least some valid filesystem characters",
         )
-        sys.exit(1)
 
     # Create post directory
     post_dir = Path(content_folder) / fs_name
     if post_dir.exists():
-        print(f"Error: Post directory '{post_dir}' already exists.", file=sys.stderr)
-        sys.exit(1)
+        raise FileAlreadyExistsError(
+            message=f"Post directory '{post_dir}' already exists.",
+            hint="Use a different title or remove the existing directory",
+        )
 
     try:
         post_dir.mkdir(parents=True, exist_ok=False)
     except Exception as e:
-        print(f"Error creating post directory: {e}", file=sys.stderr)
-        sys.exit(1)
+        raise FileCreationError(
+            message=f"Error creating post directory: {e}",
+            hint="Check file permissions and disk space",
+        ) from e
 
     # Get today's date
     today = date.today().isoformat()
@@ -106,8 +138,10 @@ def new_post_command(title: str) -> None:
         template_path = files("boumwave").joinpath("templates/post_template.md")
         post_template = template_path.read_text(encoding="utf-8")
     except Exception as e:
-        print(f"Error loading post template: {e}", file=sys.stderr)
-        sys.exit(1)
+        raise FileCreationError(
+            message=f"Error loading post template: {e}",
+            hint="Check that BoumWave is correctly installed",
+        ) from e
 
     # Create a file for each language
     created_files = []
@@ -125,8 +159,10 @@ def new_post_command(title: str) -> None:
                 f.write(content)
             created_files.append(filename)
         except Exception as e:
-            print(f"Error creating file '{filename}': {e}", file=sys.stderr)
-            sys.exit(1)
+            raise FileCreationError(
+                message=f"Error creating file '{filename}': {e}",
+                hint="Check file permissions and disk space",
+            ) from e
 
     # Success message
     print(f"✓ Created new post: {fs_name}")
