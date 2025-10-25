@@ -49,6 +49,7 @@ def render_template(template_path: Path, enriched_post: EnrichedPost) -> str:
         "published_datetime_iso": enriched_post.post.published_datetime_iso,
         "published_on_date": enriched_post.published_on_date,
         "content": enriched_post.content_html,
+        "image_path": enriched_post.image_path,
     }
 
     # Render template

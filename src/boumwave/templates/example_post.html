@@ -37,6 +37,13 @@
             </header>
 
             <!--
+            {{ image_path }} - Path to the post's main image
+            Optional field in front matter. If provided, you can use it to display a hero image
+            for your article. If not provided in front matter, falls back to site logo.
+            Example usage: <img src="{{ image_path }}" alt="{{ title }}">
+            -->
+
+            <!--
             {{ content }} - Your markdown content converted to HTML
             This is where your blog post content appears
             -->
@@ -50,6 +57,7 @@
         - {{ published_datetime_iso }}  - ISO 8601 datetime (e.g., "2025-10-24T00:00:00Z")
         - {{ published_on_date }}       - Formatted using config (date_format + translations)
         - {{ content }}                 - HTML content from markdown
+        - {{ image_path }}              - Path to the post's main image (optional in front matter, falls back to site logo)
          -->
 
         <!-- Add your JavaScript files here -->

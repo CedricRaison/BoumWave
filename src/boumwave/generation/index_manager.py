@@ -93,6 +93,7 @@ def render_post_links(posts: list[Post], config: BoumWaveConfig) -> str:
             "relative_url": post.get_relative_url(config),
             "published_datetime_iso": post.published_datetime_iso,
             "published_on_date": post.get_published_on_date(config),
+            "image_path": post.get_image_path(config),
         }
 
         # Render link template

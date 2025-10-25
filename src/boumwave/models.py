@@ -3,7 +3,7 @@
 from datetime import date
 
 from babel.dates import format_date
-from pydantic import BaseModel, Field, FilePath, computed_field
+from pydantic import BaseModel, Field, computed_field
 
 from boumwave.config import BoumWaveConfig
 
@@ -24,6 +24,10 @@ class Post(BaseModel):
     published_date: date = Field(..., description="Publication date of the post")
     lang: str = Field(
         ..., description="Language code (e.g., 'en', 'fr')", pattern=r"^[a-z]{2}$"
+    )
+    image_path: str | None = Field(
+        default=None,
+        description="Optional path to an image to illustrate the post (e.g., 'assets/hero.jpg')",
     )
 
     @computed_field
@@ -77,6 +81,21 @@ class Post(BaseModel):
         translation = config.site.translations[self.lang].published_on
         return f"{translation} {formatted_date}"
 
+    def get_image_path(self, config: BoumWaveConfig) -> str:
+        """
+        Get the image path for this post.
+        Uses post's image_path if provided, otherwise falls back to site logo.
+
+        Args:
+            config: BoumWave configuration
+
+        Returns:
+            String path to the image file
+        """
+        if self.image_path:
+            return self.image_path
+        return config.site.logo_path
+
     class Config:
         """Pydantic configuration"""
 
@@ -101,9 +120,6 @@ class EnrichedPost(BaseModel):
     post: Post = Field(..., description="Validated post front matter")
     description: str = Field(
         ..., description="SEO description (max 155 characters, extracted from content)"
-    )
-    image: FilePath = Field(
-        ..., description="Path to image for social media (first image or logo)"
     )
     content_html: str = Field(..., description="Rendered HTML content from markdown")
     config: BoumWaveConfig = Field(..., description="Complete BoumWave configuration")
@@ -138,3 +154,15 @@ class EnrichedPost(BaseModel):
         Example: "Published on October 24, 2025"
         """
         return self.post.get_published_on_date(self.config)
+
+    @computed_field
+    @property
+    def image_path(self) -> str:
+        """
+        Path to the image for this post.
+        Uses post.image_path if provided, otherwise falls back to site logo.
+
+        Returns:
+            String path to the image file
+        """
+        return self.post.get_image_path(self.config)

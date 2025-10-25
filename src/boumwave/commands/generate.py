@@ -7,7 +7,6 @@ from boumwave.config import BoumWaveConfig, load_config
 from boumwave.exceptions import BoumWaveError, EnvironmentValidationError
 from boumwave.generation import (
     extract_description,
-    extract_first_image,
     find_post_files,
     generate_seo_tags,
     inject_meta_tags_and_canonical,
@@ -151,33 +150,28 @@ def _generate_impl(post_name: str) -> None:
 
         # 3. Extract metadata
         description = extract_description(markdown_content)
-        first_image = extract_first_image(content_html)
 
-        # 4. Determine image for social media (first image or logo)
-        image_path = first_image if first_image else Path(config.site.logo_path)
-
-        # 5. Create EnrichedPost model (URLs are computed automatically)
+        # 4. Create EnrichedPost model (URLs and image_path are computed automatically)
         enriched_post = EnrichedPost(
             post=post,
             description=description,
-            image=image_path,
             content_html=content_html,
             config=config,
         )
 
-        # 6. Render user template
+        # 5. Render user template
         template_path = Path(config.paths.template_folder) / config.paths.post_template
         rendered_html = render_template(template_path, enriched_post)
 
-        # 7. Generate SEO tags (meta tags + JSON-LD)
+        # 6. Generate SEO tags (meta tags + JSON-LD)
         seo_tags = generate_seo_tags(enriched_post)
 
-        # 8. Inject SEO tags and canonical into HTML
+        # 7. Inject SEO tags and canonical into HTML
         final_html = inject_meta_tags_and_canonical(
             rendered_html, seo_tags, enriched_post.full_url
         )
 
-        # 9. Write output file
+        # 8. Write output file
         output_path = (
             Path(config.paths.output_folder) / post.lang / post.slug / "index.html"
         )

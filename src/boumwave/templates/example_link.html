@@ -14,6 +14,8 @@
     - {{ relative_url }}            - Relative URL to the post (e.g., "/posts/en/my-slug")
     - {{ published_datetime_iso }}  - ISO 8601 datetime (e.g., "2025-10-24T00:00:00Z")
     - {{ published_on_date }}       - Formatted date using your config (e.g., "Published on October 24, 2025")
+    - {{ image_path }}              - Path to the post's main image (optional in front matter, falls back to site logo)
+                                      Useful for displaying thumbnails in your post list
 
     Multi-language tip:
     If you write posts in multiple languages, we recommend adding a language-based class

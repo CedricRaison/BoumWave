@@ -1,7 +1,6 @@
 """Metadata extraction and meta tag generation"""
 
 import json
-from pathlib import Path
 
 import markdown
 from bs4 import BeautifulSoup
@@ -48,25 +47,6 @@ def extract_description(markdown_content: str, max_length: int = 155) -> str:
     return truncated + "..."
 
 
-def extract_first_image(html_content: str) -> Path | None:
-    """
-    Extract the first image from HTML content.
-
-    Args:
-        html_content: Rendered HTML content
-
-    Returns:
-        Path to the first image found, or None if no image exists
-    """
-    soup = BeautifulSoup(html_content, "html.parser")
-    img_tag = soup.find("img")
-
-    if img_tag and img_tag.get("src"):
-        return Path(img_tag["src"])
-
-    return None
-
-
 def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     """
     Generate Open Graph and Twitter Card meta tags.
@@ -86,7 +66,7 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     <meta property="og:title" content="{post.title}">
     <meta property="og:description" content="{enriched_post.description}">
     <meta property="og:url" content="{enriched_post.full_url}">
-    <meta property="og:image" content="{enriched_post.image}">
+    <meta property="og:image" content="{enriched_post.image_path}">
     <meta property="og:locale" content="{post.lang}">
     <meta property="article:published_time" content="{post.published_datetime_iso}">
 
@@ -94,7 +74,7 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{post.title}">
     <meta name="twitter:description" content="{enriched_post.description}">
-    <meta name="twitter:image" content="{enriched_post.image}">"""
+    <meta name="twitter:image" content="{enriched_post.image_path}">"""
 
     return meta_tags
 
@@ -117,7 +97,7 @@ def generate_json_ld(enriched_post: EnrichedPost) -> str:
         "headline": post.title,
         "datePublished": post.published_datetime_iso,
         "url": enriched_post.full_url,
-        "image": str(enriched_post.image),
+        "image": enriched_post.image_path,
         "description": enriched_post.description,
         "inLanguage": post.lang,
     }

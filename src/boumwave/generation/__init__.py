@@ -3,7 +3,6 @@
 from boumwave.generation.index_manager import update_index
 from boumwave.generation.metadata import (
     extract_description,
-    extract_first_image,
     generate_seo_tags,
     inject_meta_tags_and_canonical,
 )
@@ -16,7 +15,6 @@ __all__ = [
     "find_post_files",
     "render_markdown",
     "extract_description",
-    "extract_first_image",
     "generate_seo_tags",
     "inject_meta_tags_and_canonical",
     "render_template",
