@@ -3,7 +3,7 @@
 from datetime import date
 
 from babel.dates import format_date
-from pydantic import BaseModel, Field, computed_field
+from pydantic import BaseModel, Field, FilePath, computed_field
 
 from boumwave.config import BoumWaveConfig
 
@@ -25,7 +25,7 @@ class Post(BaseModel):
     lang: str = Field(
         ..., description="Language code (e.g., 'en', 'fr')", pattern=r"^[a-z]{2}$"
     )
-    image_path: str | None = Field(
+    image_path: FilePath | None = Field(
         default=None,
         description="Optional path to an image to illustrate the post (e.g., 'assets/hero.jpg')",
     )
@@ -93,7 +93,7 @@ class Post(BaseModel):
             String path to the image file
         """
         if self.image_path:
-            return self.image_path
+            return str(self.image_path)
         return config.site.logo_path
 
     class Config:
