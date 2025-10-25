@@ -15,4 +15,5 @@ boumwave.toml
 content/
 /templates/
 posts/
+index.html
 CLAUDE.md

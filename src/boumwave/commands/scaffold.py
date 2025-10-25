@@ -42,12 +42,12 @@ def scaffold_command() -> None:
                 sys.exit(1)
 
     # Copy default post template if it doesn't exist
-    template_destination = Path(template_folder) / config.paths.post_template
-    template_was_created = False
+    post_template_destination = Path(template_folder) / config.paths.post_template
+    post_template_was_created = False
 
-    if template_destination.exists():
+    if post_template_destination.exists():
         print(
-            f"⚠ Warning: Template '{template_destination}' already exists, skipping copy."
+            f"⚠ Warning: Template '{post_template_destination}' already exists, skipping copy."
         )
     else:
         try:
@@ -56,18 +56,43 @@ def scaffold_command() -> None:
             template_content = template_source.read_text(encoding="utf-8")
 
             # Write to destination
-            template_destination.write_text(template_content, encoding="utf-8")
-            print(f"✓ Created template file: {template_destination}")
-            template_was_created = True
+            post_template_destination.write_text(template_content, encoding="utf-8")
+            print(f"✓ Created template file: {post_template_destination}")
+            post_template_was_created = True
         except Exception as e:
             print(
-                f"Error creating template file '{template_destination}': {e}",
+                f"Error creating template file '{post_template_destination}': {e}",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+    # Copy default index template if it doesn't exist (at project root)
+    index_destination = Path(config.paths.index_template)
+    index_was_created = False
+
+    if index_destination.exists():
+        print(
+            f"⚠ Warning: Index file '{index_destination}' already exists, skipping copy."
+        )
+    else:
+        try:
+            # Get default index template from package resources
+            index_source = files("boumwave").joinpath("templates/example_index.html")
+            index_content = index_source.read_text(encoding="utf-8")
+
+            # Write to destination (at project root)
+            index_destination.write_text(index_content, encoding="utf-8")
+            print(f"✓ Created index file: {index_destination}")
+            index_was_created = True
+        except Exception as e:
+            print(
+                f"Error creating index file '{index_destination}': {e}",
                 file=sys.stderr,
             )
             sys.exit(1)
 
     print()
-    if created_folders or template_was_created:
+    if created_folders or post_template_was_created or index_was_created:
         print("Scaffold completed! Your project structure is ready.")
     else:
-        print("Scaffold completed! All folders already exist.")
+        print("Scaffold completed! All folders and files already exist.")

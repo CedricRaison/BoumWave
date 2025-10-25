@@ -36,6 +36,9 @@ class PathsConfig(BaseModel):
     post_template: str = Field(
         description="HTML template file for generating posts (must be in template_folder)"
     )
+    index_template: str = Field(
+        description="HTML file for the blog's index/home page (created at project root)"
+    )
 
 
 class SiteConfig(BaseModel):

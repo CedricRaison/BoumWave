@@ -17,6 +17,10 @@ output_folder = "posts"
 # The markdown content will be rendered and injected into this template
 post_template = "post.html"
 
+# HTML file for the blog's index/home page
+# This file will be created at the root of your project if it doesn't exist
+index_template = "index.html"
+
 [site]
 # Languages supported by your site
 # Examples:

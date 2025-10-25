@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{ lang }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!--
+        <!--
         This is a basic demo template to show you the available variables.
         Feel free to modify or replace this file completely with your own design!
 
@@ -15,45 +15,43 @@
 
         You don't need to add these manually!
         Just focus on your HTML structure and styling.
-    -->
+        -->
 
-    <title>{{ title }}</title>
+        <title>{{ title }}</title>
 
-    <!-- Add your CSS files here -->
-</head>
-<body>
-    <article>
-        <header>
-            <!-- {{ title }} - Title from your markdown file -->
-            <h1>{{ title }}</h1>
+        <!-- Add your CSS files here -->
+    </head>
+    <body>
+        <article>
+            <header>
+                <!-- {{ title }} - Title from your markdown file -->
+                <h1>{{ title }}</h1>
 
-            <!--
+                <!--
                 Date formats available:
                 - {{ published_datetime_iso }} - ISO 8601 format (e.g., "2025-10-24T00:00:00Z")
                 - {{ published_on_date }} - Formatted using your config (date_format + translations)
                   Example: "Published on October 24, 2025"
-            -->
-            <p>{{ published_on_date }}</p>
-        </header>
+                -->
+                <p>{{ published_on_date }}</p>
+            </header>
 
-        <!--
+            <!--
             {{ content }} - Your markdown content converted to HTML
             This is where your blog post content appears
-        -->
-        <main>
-            {{ content }}
-        </main>
-    </article>
+            -->
+            <main>{{ content }}</main>
+        </article>
 
-    <!--
+        <!--
         Available variables in this template:
         - {{ lang }}                    - Language code (e.g., "en", "fr")
         - {{ title }}                   - Post title
         - {{ published_datetime_iso }}  - ISO 8601 datetime (e.g., "2025-10-24T00:00:00Z")
         - {{ published_on_date }}       - Formatted using config (date_format + translations)
         - {{ content }}                 - HTML content from markdown
-    -->
+         -->
 
-    <!-- Add your JavaScript files here -->
-</body>
+        <!-- Add your JavaScript files here -->
+    </body>
 </html>
