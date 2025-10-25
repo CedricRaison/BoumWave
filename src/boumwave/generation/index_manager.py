@@ -142,7 +142,7 @@ def update_index(config: BoumWaveConfig) -> None:
         index_content[: start_pos + len(start_marker)]
         + "\n"
         + post_links_html
-        + "\n        "
+        + "\n"
         + index_content[end_pos:]
     )
 
