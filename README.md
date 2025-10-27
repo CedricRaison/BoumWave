@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.jpg" alt="BoumWave Logo" width="400">
+  <img src="logo.jpg" alt="BoumWave Logo" width="250">
 </p>
 
 # BoumWave
