@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.jpg" alt="BoumWave Logo" width="400">
+</p>
+
 # BoumWave
 
 **The static blog generator that does exactly what it needs to. Nothing more.**
@@ -143,6 +147,14 @@ BoumWave handles:
 - Automatic index.html links
 
 The rest is your site. Do what you want with it.
+
+## Why the name?
+
+**BoumWave** is a combination of my username **BoumTAC** and the word **"weave"**, which means to interlace or connect threads together. A static site generator weaves a link between a template and a text file, bringing them together into a final page.
+
+**But here's the funny part:** when I started the project, I made a typo and wrote "wave" instead of "weave". It has a completely different meaning, but I kept it. The waves in the logo now make perfect sense, and it makes for a nice story.
+
+Sometimes the best names come from happy accidents.
 
 ## License
 
