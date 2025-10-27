@@ -24,7 +24,7 @@ The goal: simplify the conversion from markdown to your template without having 
 
 You initialize it, you design your template, you don't even need to read docs, and boom your blog is generated.
 
-**No documentation needed.** The configuration file and templates contain detailed comments explaining what everything does. Just read the files.
+**No documentation needed.** The configuration file and templates contain detailed comments explaining what everything does. [Just read the files](https://github.com/CedricRaison/BoumWave/blob/master/src/boumwave/templates/default_config.toml).
 
 If you want to add other features to your blog, like an about page or a contact page, that's not the job of a static site generator. You can add them easily yourself.
 
@@ -59,7 +59,7 @@ bw new_post "My Awesome Post"
 # Generate the HTML
 bw generate my_awesome_post
 
-# Done. Your post is in posts/
+# Done. Your post is in posts/en/my-awesome-post/
 ```
 
 ## Installation
@@ -115,7 +115,7 @@ Generates HTML with:
 - Twitter Card
 - JSON-LD for search engines
 - Canonical link
-- Automatic index update
+- Automatic index.html update
 
 ## Configuration
 
