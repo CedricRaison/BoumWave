@@ -106,6 +106,13 @@ def _update_index_with_now(latest_now: Now) -> None:
     """
     config = load_config()
 
+    # fix to prevent Astral ty warning
+    assert config.paths.now_template is not None
+    assert config.paths.now_index_template is not None
+    assert config.site.now_start_marker is not None
+    assert config.site.now_end_marker is not None
+    assert config.paths.now_template is not None
+
     # Setup Jinja2 environment
     env = Environment(loader=FileSystemLoader(config.paths.template_folder))
     template = env.get_template(config.paths.now_index_template)
@@ -178,6 +185,8 @@ def _generate_now_page(now_posts: list[Now]) -> None:
 
     # Setup Jinja2 environment
     env = Environment(loader=FileSystemLoader(config.paths.template_folder))
+    # fix to prevent Astral ty warning
+    assert config.paths.now_template is not None
     template = env.get_template(config.paths.now_template)
 
     # Render template with all Now posts
