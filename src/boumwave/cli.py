@@ -5,8 +5,10 @@ import sys
 
 from boumwave.commands import (
     generate_command,
+    generate_now_command,
     generate_sitemap_command,
     init_command,
+    new_now_command,
     new_post_command,
     scaffold_command,
 )
@@ -48,6 +50,14 @@ def main() -> None:
         "generate_sitemap", help="Generate sitemap.xml with all blog post URLs"
     )
 
+    # 'new_now' subcommand
+    subparsers.add_parser("new_now", help="Create a new Now. post for today's date")
+
+    # 'generate_now' subcommand
+    subparsers.add_parser(
+        "generate_now", help="Generate Now. feature and update index.html"
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -67,6 +77,10 @@ def main() -> None:
         generate_command(args.post_name)
     elif args.command == "generate_sitemap":
         generate_sitemap_command()
+    elif args.command == "new_now":
+        new_now_command()
+    elif args.command == "generate_now":
+        generate_now_command()
 
 
 if __name__ == "__main__":

@@ -53,6 +53,18 @@ class PathsConfig(BaseModel):
     sitemap_template: str = Field(
         description="XML file for the sitemap (created at project root)"
     )
+    now_folder: str | None = Field(
+        default=None,
+        description="Folder where 'Now.' posts are stored (optional, enables Now. feature)",
+    )
+    now_template: str | None = Field(
+        default=None,
+        description="HTML file for listing all Now. posts (optional, requires now_folder)",
+    )
+    now_index_template: str | None = Field(
+        default=None,
+        description="HTML template for displaying Now. post in index.html (optional, requires now_folder)",
+    )
 
 
 class SiteConfig(BaseModel):
@@ -81,6 +93,14 @@ class SiteConfig(BaseModel):
     )
     sitemap_end_marker: str = Field(
         description="XML comment marker to indicate where BoumWave posts end in sitemap.xml"
+    )
+    now_start_marker: str | None = Field(
+        default=None,
+        description="HTML comment marker to indicate where Now. post starts in index.html (optional)",
+    )
+    now_end_marker: str | None = Field(
+        default=None,
+        description="HTML comment marker to indicate where Now. post ends in index.html (optional)",
     )
     translations: dict[str, Translations] = Field(
         description="Translations for template text, keyed by language code"

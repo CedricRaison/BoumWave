@@ -1,0 +1,25 @@
+<!--
+    This is a template for displaying your latest "Now." post in your index.html.
+
+    When you run "bw generate_now", BoumWave will:
+    1. Find your most recent Now. post
+    2. Render this template with the post data
+    3. Insert the result between the now_start_marker and now_end_marker in your index.html
+
+    This allows you to show a quick status update on your home page.
+
+    Available variables:
+    - {{ published_datetime_iso }}  - ISO 8601 datetime (e.g., "2025-10-28T00:00:00Z")
+    - {{ date_formatted }}          - Formatted date using your config (e.g., "October 28, 2025")
+    - {{ content }}                 - The HTML content of your Now. post
+
+    Feel free to customize this template with your own HTML structure and CSS classes!
+-->
+
+<div class="now-section">
+    <h3>What I'm doing now</h3>
+    <time datetime="{{ published_datetime_iso }}">{{ date_formatted }}</time>
+    <div class="now-content">
+        {{ content }}
+    </div>
+</div>

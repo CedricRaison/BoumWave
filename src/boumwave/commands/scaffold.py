@@ -83,6 +83,10 @@ def _scaffold_impl() -> None:
         ("output", output_folder),
     ]
 
+    # Add now_folder if Now. feature is enabled
+    if config.paths.now_folder:
+        folders_to_create.append(("now", config.paths.now_folder))
+
     # Create folders if they don't exist
     created_folders = []
     for folder_type, folder_path in folders_to_create:
@@ -130,6 +134,30 @@ def _scaffold_impl() -> None:
     files_created.append(
         _copy_template_file("example_sitemap.xml", sitemap_destination, "sitemap file")
     )
+
+    # Now. template (if Now. feature is enabled)
+    if config.paths.now_template:
+        now_template_destination = (
+            Path(config.paths.template_folder) / config.paths.now_template
+        )
+        files_created.append(
+            _copy_template_file(
+                "example_now.html", now_template_destination, "now template file"
+            )
+        )
+
+    # Now. index template (if Now. feature is enabled)
+    if config.paths.now_index_template:
+        now_index_template_destination = (
+            Path(config.paths.template_folder) / config.paths.now_index_template
+        )
+        files_created.append(
+            _copy_template_file(
+                "example_now_index.html",
+                now_index_template_destination,
+                "now index template file",
+            )
+        )
 
     if created_folders or any(files_created):
         print("Scaffold completed! Your project structure is ready.")

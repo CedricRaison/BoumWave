@@ -31,6 +31,32 @@ index_template = "index.html"
 # This file will be created at the root of your project if it doesn't exist
 sitemap_template = "sitemap.xml"
 
+# ========================================
+# "Now." Feature (Optional)
+# ========================================
+# The "Now." feature lets you share quick updates about what you're currently doing,
+# thinking, or working on. It's like a micro-blog that appears on your homepage.
+#
+# To enable this feature:
+# 1. Uncomment the lines below
+# 2. Run "bw scaffold" to create the example now.html template
+# 3. Add the Now. markers to your index.html where you want the latest update to appear
+# 4. Use "bw new_now" to create a new update
+# 5. Use "bw generate_now" to publish your updates
+#
+# Each Now. post is a simple markdown file named by date (e.g., 2025-10-28.md)
+# The latest update appears on your homepage, and all updates are archived on now.html
+#
+# Configuration options:
+# - now_folder: Folder where your Now. markdown files are stored
+# - now_template: HTML page listing all your Now. posts (e.g., example.com/now.html)
+# - now_index_template: HTML template snippet for displaying the latest Now. post in index.html
+#                       This template lets you customize how the Now. section appears on your homepage
+#
+# now_folder = "now"
+# now_template = "now.html"
+# now_index_template = "now_index.html"
+
 [site]
 # Languages supported by your site
 # Examples:
@@ -55,6 +81,14 @@ posts_end_marker = "<!-- BOUMWAVE_POSTS_END -->"
 # You can add your own custom URLs (e.g., /my-projects.html) outside these markers
 sitemap_start_marker = "<!-- BOUMWAVE_START -->"
 sitemap_end_marker = "<!-- BOUMWAVE_END -->"
+
+# Now. markers for index.html (Optional - only needed if you enable the Now. feature)
+# BoumWave will automatically insert your latest Now. update between these markers
+# The zone between these markers will be regenerated when you run "bw generate_now"
+# Add these markers in your index.html where you want your current status to appear
+# Uncomment these lines if you want to use the Now. feature:
+# now_start_marker = "<!-- BOUMWAVE_NOW_START -->"
+# now_end_marker = "<!-- BOUMWAVE_NOW_END -->"
 
 # Path to your site's logo
 # This logo will be used for social media meta tags (Open Graph, Twitter Card)

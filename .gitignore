@@ -15,6 +15,8 @@ boumwave.toml
 content/
 /templates/
 posts/
+now/
 index.html
+now.html
 sitemap.xml
 CLAUDE.md

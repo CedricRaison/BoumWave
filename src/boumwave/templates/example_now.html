@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Now - What I'm Currently Doing</title>
+    </head>
+    <body>
+        <!--
+        This is your "Now." page - a complete history of your quick status updates.
+        You are completely free to modify this file as you wish!
+
+        When you run "bw generate_now", BoumWave will use this template to generate
+        the final now.html page with all your Now. posts.
+
+        Add your own design, CSS, JavaScript, and structure.
+        -->
+
+        <h1>Now</h1>
+        <p>Quick updates about what I'm currently doing, thinking, or working on.</p>
+
+        <!--
+        AVAILABLE TEMPLATE VARIABLES:
+        ==============================
+
+        This template has access to the following Jinja2 variable:
+
+        - now_posts: A list of Now objects, sorted by date (most recent first)
+
+        Each Now object has these properties:
+        - post_date: The date of the update (datetime.date object)
+        - published_datetime_iso: ISO 8601 formatted datetime (e.g., "2025-10-28T00:00:00Z")
+        - content: The HTML content of the Now. post
+
+        Each Now object has these methods:
+        - get_date_formatted(config): Returns a localized, formatted date string
+          (e.g., "October 28, 2025" depending on your date_format config)
+
+        EXAMPLE USAGE:
+        ==============
+
+        {% for now in now_posts %}
+        <article>
+            <time datetime="{{ now.published_datetime_iso }}">
+                {{ now.get_date_formatted(config) }}
+            </time>
+            <div>
+                {{ now.content }}
+            </div>
+        </article>
+        {% endfor %}
+        -->
+
+        <!-- Example implementation: -->
+        <div class="now-posts">
+            {% for now in now_posts %}
+            <article class="now-post">
+                <time datetime="{{ now.published_datetime_iso }}">
+                    {{ now.get_date_formatted(config) }}
+                </time>
+                <div class="now-content">
+                    {{ now.content }}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </body>
+</html>

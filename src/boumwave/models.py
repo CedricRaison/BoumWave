@@ -166,3 +166,47 @@ class EnrichedPost(BaseModel):
             String path to the image file
         """
         return self.post.get_image_path(self.config)
+
+
+class Now(BaseModel):
+    """
+    Model representing a 'Now.' post - a short update about what you're currently doing.
+
+    Now. posts are language-agnostic micro-blog entries that appear on the homepage
+    and are archived on a dedicated now.html page.
+    """
+
+    post_date: date = Field(..., description="Date of the Now. post")
+    content: str = Field(..., description="HTML content of the Now. post")
+
+    @computed_field
+    @property
+    def published_datetime_iso(self) -> str:
+        """
+        ISO 8601 datetime format for meta tags.
+        Converts the date to datetime with 00:00:00 UTC.
+
+        Example: "2025-10-28T00:00:00Z"
+        """
+        return f"{self.post_date}T00:00:00Z"
+
+    def get_date_formatted(self, config: BoumWaveConfig) -> str:
+        """
+        Get the localized and formatted date based on config.site.date_format.
+
+        Since Now. posts are language-agnostic, uses the first configured language
+        for date localization.
+
+        Args:
+            config: BoumWave configuration
+
+        Returns:
+            Formatted date (e.g., "October 28, 2025" for English long format)
+        """
+        # Use the first configured language for date formatting
+        locale = config.site.languages[0] if config.site.languages else "en"
+        return format_date(
+            self.post_date,
+            format=config.site.date_format.value,
+            locale=locale,
+        )

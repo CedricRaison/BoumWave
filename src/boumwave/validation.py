@@ -129,3 +129,117 @@ def validate_sitemap_environment() -> None:
         raise EnvironmentValidationError(
             ["Sitemap environment validation failed\n"] + errors
         )
+
+
+def validate_now_environment() -> None:
+    """
+    Validate the environment before generating Now. posts.
+    Checks that the Now. feature is enabled and all required files exist.
+
+    Raises:
+        EnvironmentValidationError: If any validation fails
+    """
+    config = get_config()
+    errors = []
+
+    # 1. Check if Now. feature is enabled
+    if not config.paths.now_folder:
+        errors.append("The Now. feature is not enabled in your configuration")
+        errors.append(
+            "  Uncomment 'now_folder' in boumwave.toml to enable this feature"
+        )
+
+    if not config.paths.now_template:
+        errors.append("The 'now_template' is not configured in boumwave.toml")
+        errors.append(
+            "  Uncomment 'now_template' in boumwave.toml to enable this feature"
+        )
+
+    if not config.paths.now_index_template:
+        errors.append("The 'now_index_template' is not configured in boumwave.toml")
+        errors.append(
+            "  Uncomment 'now_index_template' in boumwave.toml to enable this feature"
+        )
+
+    if not config.site.now_start_marker or not config.site.now_end_marker:
+        errors.append("The Now. markers are not configured in boumwave.toml")
+        errors.append(
+            "  Uncomment 'now_start_marker' and 'now_end_marker' in boumwave.toml"
+        )
+
+    # Stop here if basic config is missing (can't check files without config)
+    if errors:
+        raise EnvironmentValidationError(
+            ["Now. environment validation failed\n"] + errors
+        )
+
+    # 2. Check now_folder exists
+    now_folder = Path(config.paths.now_folder)
+    if not now_folder.exists():
+        errors.append(f"Now. folder not found: {now_folder}")
+        errors.append("  Run 'bw scaffold' to create it")
+    elif not now_folder.is_dir():
+        errors.append(f"Not a directory: {now_folder}")
+
+    # 3. Check if there are any .md files in now_folder (only if folder exists)
+    if now_folder.exists() and now_folder.is_dir():
+        md_files = list(now_folder.glob("*.md"))
+        if not md_files:
+            errors.append(f"No Now. posts found in {now_folder}")
+            errors.append("  Run 'bw new_now' to create your first Now. post")
+
+    # 4. Check template folder exists
+    template_folder = Path(config.paths.template_folder)
+    if not template_folder.exists():
+        errors.append(f"Template folder not found: {template_folder}")
+        errors.append("  Run 'bw scaffold' to create it")
+
+    # 5. Check now_template exists
+    now_template_path = template_folder / config.paths.now_template
+    if not now_template_path.exists():
+        errors.append(f"Now. template not found: {now_template_path}")
+        errors.append("  Run 'bw scaffold' to create it")
+
+    # 6. Check now_index_template exists
+    now_index_template_path = template_folder / config.paths.now_index_template
+    if not now_index_template_path.exists():
+        errors.append(f"Now. index template not found: {now_index_template_path}")
+        errors.append("  Run 'bw scaffold' to create it")
+
+    # 7. Check index.html exists
+    index_path = Path(config.paths.index_template)
+    if not index_path.exists():
+        errors.append(f"Index file not found: {index_path}")
+        errors.append("  Run 'bw scaffold' to create it")
+
+    # 8. Check Now. markers exist in index.html (only if file exists)
+    if index_path.exists():
+        try:
+            index_content = index_path.read_text(encoding="utf-8")
+            start_marker = config.site.now_start_marker
+            end_marker = config.site.now_end_marker
+
+            # At this point, markers are guaranteed to be not None (validated above)
+            # This is to prevent an Astral ty error
+            assert start_marker is not None
+            assert end_marker is not None
+
+            if start_marker not in index_content:
+                errors.append(f"Now. start marker not found in {index_path}")
+                errors.append(f"  Expected: {start_marker}")
+                errors.append(
+                    "  Add this marker where you want your Now. post to appear"
+                )
+
+            if end_marker not in index_content:
+                errors.append(f"Now. end marker not found in {index_path}")
+                errors.append(f"  Expected: {end_marker}")
+                errors.append("  Add this marker where you want your Now. post to end")
+        except Exception as e:
+            errors.append(f"Could not read index file: {e}")
+
+    # If any errors, raise exception with all errors
+    if errors:
+        raise EnvironmentValidationError(
+            ["Now. environment validation failed\n"] + errors
+        )
