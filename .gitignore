@@ -20,3 +20,7 @@ index.html
 now.html
 sitemap.xml
 CLAUDE.md
+
+.coverage
+htmlcov/
+.pytest_cache/
