@@ -15,6 +15,15 @@ from boumwave.config import (
 from boumwave.models import EnrichedPost, Post
 
 
+@pytest.fixture(autouse=True)
+def reset_config_cache():
+    """Reset global config cache before each test"""
+    import boumwave.config
+    boumwave.config._config = None
+    yield
+    boumwave.config._config = None
+
+
 @pytest.fixture
 def sample_translations() -> dict[str, Translations]:
     """Sample translations for English and French"""

@@ -166,6 +166,136 @@ This is test content.
         assert '<link href="https://example.com/posts/en/test-post" rel="canonical"' in html_content
 
 
+class TestNewNowCommand:
+    """E2E tests for 'bw new_now' command"""
+
+    def test_new_now_creates_file(self, tmp_path: Path, monkeypatch):
+        """Test that 'bw new_now' creates a file for today"""
+        monkeypatch.chdir(tmp_path)
+
+        # Create config with Now. feature enabled
+        (tmp_path / "boumwave.toml").write_text(
+            """
+[paths]
+template_folder = "templates"
+content_folder = "content"
+output_folder = "posts"
+post_template = "post.html"
+link_template = "link.html"
+index_template = "index.html"
+sitemap_template = "sitemap.xml"
+now_folder = "now"
+now_template = "now.html"
+now_index_template = "now_index.html"
+
+[site]
+languages = ["en", "fr"]
+site_url = "https://example.com"
+logo_path = "assets/logo.jpg"
+date_format = "long"
+posts_start_marker = "<!-- POSTS_START -->"
+posts_end_marker = "<!-- POSTS_END -->"
+sitemap_start_marker = "<!-- SITEMAP_START -->"
+sitemap_end_marker = "<!-- SITEMAP_END -->"
+now_start_marker = "<!-- NOW_START -->"
+now_end_marker = "<!-- NOW_END -->"
+
+[site.translations.en]
+published_on = "Published on"
+
+[site.translations.fr]
+published_on = "Publié le"
+"""
+        )
+
+        with patch.object(sys, "argv", ["bw", "new_now"]):
+            main()
+
+        # Check file was created
+        from datetime import date
+
+        today = date.today()
+        expected_file = tmp_path / "now" / f"{today.isoformat()}.md"
+        assert expected_file.exists()
+
+    def test_new_now_feature_disabled(self, tmp_path: Path, monkeypatch, sample_config_file: Path, capsys):
+        """Test error when Now. feature is not configured"""
+        monkeypatch.chdir(tmp_path)
+
+        with patch.object(sys, "argv", ["bw", "new_now"]):
+            with pytest.raises(SystemExit):
+                main()
+
+        captured = capsys.readouterr()
+        assert "Now. feature is not enabled" in captured.err
+
+
+class TestGenerateNowCommand:
+    """E2E tests for 'bw generate_now' command"""
+
+    def test_generate_now_creates_pages(self, tmp_path: Path, monkeypatch):
+        """Test that 'bw generate_now' creates now.html and updates index"""
+        monkeypatch.chdir(tmp_path)
+
+        # Create full configuration
+        (tmp_path / "boumwave.toml").write_text(
+            """
+[paths]
+template_folder = "templates"
+content_folder = "content"
+output_folder = "posts"
+post_template = "post.html"
+link_template = "link.html"
+index_template = "index.html"
+sitemap_template = "sitemap.xml"
+now_folder = "now"
+now_template = "now.html"
+now_index_template = "now_index.html"
+
+[site]
+languages = ["en"]
+site_url = "https://example.com"
+logo_path = "logo.jpg"
+date_format = "long"
+posts_start_marker = "<!-- POSTS_START -->"
+posts_end_marker = "<!-- POSTS_END -->"
+sitemap_start_marker = "<!-- SITEMAP_START -->"
+sitemap_end_marker = "<!-- SITEMAP_END -->"
+now_start_marker = "<!-- NOW_START -->"
+now_end_marker = "<!-- NOW_END -->"
+
+[site.translations.en]
+published_on = "Published on"
+"""
+        )
+
+        # Create templates
+        (tmp_path / "templates").mkdir()
+        (tmp_path / "templates" / "now.html").write_text("<html><body>Now page</body></html>")
+        (tmp_path / "templates" / "now_index.html").write_text(
+            '<div class="now">{{ content }}</div>'
+        )
+
+        # Create index.html with markers
+        (tmp_path / "index.html").write_text(
+            "<!DOCTYPE html><html><body><!-- NOW_START --><!-- NOW_END --></body></html>"
+        )
+
+        # Create a Now. post
+        (tmp_path / "now").mkdir()
+        (tmp_path / "now" / "2025-10-28.md").write_text("# My status\n\nWorking on tests!")
+
+        with patch.object(sys, "argv", ["bw", "generate_now"]):
+            main()
+
+        # Check now.html was created
+        assert (tmp_path / "now.html").exists()
+
+        # Check index.html was updated
+        index_content = (tmp_path / "index.html").read_text()
+        assert "Working on tests" in index_content
+
+
 class TestCLIHelp:
     """E2E tests for CLI help and errors"""
 
