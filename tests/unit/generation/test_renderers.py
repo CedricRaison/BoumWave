@@ -1,7 +1,5 @@
 """Unit tests for generation/renderers.py"""
 
-import pytest
-
 from boumwave.generation.renderers import render_markdown
 
 

@@ -1,6 +1,5 @@
 """Unit tests for Now. commands"""
 
-import sys
 from datetime import date
 from pathlib import Path
 from unittest.mock import patch
@@ -28,7 +27,9 @@ class TestNewNowCommand:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.new_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.new_now.load_config", return_value=config_with_now
+        ):
             _new_now_impl()
 
         # Check file was created
@@ -48,13 +49,17 @@ class TestNewNowCommand:
         config_without_now = sample_config
         config_without_now.paths.now_folder = None
 
-        with patch("boumwave.commands.new_now.load_config", return_value=config_without_now):
+        with patch(
+            "boumwave.commands.new_now.load_config", return_value=config_without_now
+        ):
             with pytest.raises(ValidationError) as exc_info:
                 _new_now_impl()
 
             assert "Now. feature is not enabled" in str(exc_info.value)
 
-    def test_new_now_file_already_exists(self, tmp_path: Path, monkeypatch, sample_config):
+    def test_new_now_file_already_exists(
+        self, tmp_path: Path, monkeypatch, sample_config
+    ):
         """Test error when today's file already exists"""
         monkeypatch.chdir(tmp_path)
 
@@ -68,7 +73,9 @@ class TestNewNowCommand:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.new_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.new_now.load_config", return_value=config_with_now
+        ):
             with pytest.raises(FileAlreadyExistsError) as exc_info:
                 _new_now_impl()
 
@@ -89,7 +96,9 @@ class TestCollectAllNowPosts:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             posts = _collect_all_now_posts()
             assert posts == []
 
@@ -105,14 +114,18 @@ class TestCollectAllNowPosts:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             posts = _collect_all_now_posts()
 
             assert len(posts) == 1
             assert posts[0].post_date == date(2025, 10, 28)
             assert "<h1>Hello</h1>" in posts[0].content
 
-    def test_collect_multiple_posts_sorted(self, tmp_path: Path, monkeypatch, sample_config):
+    def test_collect_multiple_posts_sorted(
+        self, tmp_path: Path, monkeypatch, sample_config
+    ):
         """Test that posts are sorted by date (most recent first)"""
         monkeypatch.chdir(tmp_path)
 
@@ -126,7 +139,9 @@ class TestCollectAllNowPosts:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             posts = _collect_all_now_posts()
 
             assert len(posts) == 3
@@ -150,7 +165,9 @@ class TestCollectAllNowPosts:
         config_with_now = sample_config
         config_with_now.paths.now_folder = "now"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             posts = _collect_all_now_posts()
 
             # Should only get valid post
@@ -166,7 +183,9 @@ class TestCollectAllNowPosts:
 class TestUpdateIndexWithNow:
     """Tests for _update_index_with_now function"""
 
-    def test_update_index_with_now_post(self, tmp_path: Path, monkeypatch, sample_config):
+    def test_update_index_with_now_post(
+        self, tmp_path: Path, monkeypatch, sample_config
+    ):
         """Test updating index.html with a Now. post"""
         monkeypatch.chdir(tmp_path)
 
@@ -204,7 +223,9 @@ class TestUpdateIndexWithNow:
         config_with_now = sample_config
         config_with_now.paths.now_index_template = "now_index.html"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             _update_index_with_now(now_post)
 
         # Check index was updated
@@ -250,7 +271,9 @@ class TestGenerateNowPage:
         config_with_now = sample_config
         config_with_now.paths.now_template = "now.html"
 
-        with patch("boumwave.commands.generate_now.load_config", return_value=config_with_now):
+        with patch(
+            "boumwave.commands.generate_now.load_config", return_value=config_with_now
+        ):
             _generate_now_page(now_posts)
 
         # Check now.html was created

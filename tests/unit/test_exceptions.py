@@ -1,7 +1,5 @@
 """Unit tests for exceptions.py"""
 
-import pytest
-
 from boumwave.exceptions import (
     BoumWaveError,
     ConfigNotFoundError,
@@ -57,9 +55,7 @@ class TestConfigurationErrors:
 
     def test_config_validation_error(self):
         """Test ConfigValidationError"""
-        error = ConfigValidationError(
-            message="Invalid config", hint="Check your TOML"
-        )
+        error = ConfigValidationError(message="Invalid config", hint="Check your TOML")
         assert error.message == "Invalid config"
         assert error.hint == "Check your TOML"
 
@@ -140,9 +136,7 @@ class TestFileSystemErrors:
 
     def test_file_not_found_error(self):
         """Test FileNotFoundError"""
-        error = FileNotFoundError(
-            message="File not found", hint="Check the path"
-        )
+        error = FileNotFoundError(message="File not found", hint="Check the path")
         assert error.message == "File not found"
         assert error.hint == "Check the path"
 
@@ -156,9 +150,7 @@ class TestFileSystemErrors:
 
     def test_file_already_exists_error(self):
         """Test FileAlreadyExistsError"""
-        error = FileAlreadyExistsError(
-            message="File exists", hint="Use different name"
-        )
+        error = FileAlreadyExistsError(message="File exists", hint="Use different name")
         assert error.message == "File exists"
         assert error.hint == "Use different name"
 

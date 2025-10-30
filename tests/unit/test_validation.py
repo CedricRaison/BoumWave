@@ -1,7 +1,7 @@
 """Unit tests for validation.py"""
 
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -16,9 +16,7 @@ from boumwave.validation import (
 class TestValidateGenerateEnvironment:
     """Tests for validate_generate_environment"""
 
-    def test_validate_all_files_exist(
-        self, tmp_path: Path, monkeypatch, sample_config
-    ):
+    def test_validate_all_files_exist(self, tmp_path: Path, monkeypatch, sample_config):
         """Test validation passes when all files exist"""
         monkeypatch.chdir(tmp_path)
 
@@ -30,9 +28,7 @@ class TestValidateGenerateEnvironment:
         (tmp_path / "templates" / "link.html").write_text("link")
         (tmp_path / "content").mkdir()
         (tmp_path / "content" / "test_post").mkdir()
-        (tmp_path / "index.html").write_text(
-            "<!-- POSTS_START --><!-- POSTS_END -->"
-        )
+        (tmp_path / "index.html").write_text("<!-- POSTS_START --><!-- POSTS_END -->")
 
         with patch("boumwave.validation.get_config", return_value=sample_config):
             # Should not raise
@@ -132,9 +128,7 @@ class TestValidateGenerateEnvironment:
         (tmp_path / "templates" / "post.html").write_text("template")
         (tmp_path / "templates" / "link.html").write_text("link")
         (tmp_path / "content").mkdir()
-        (tmp_path / "index.html").write_text(
-            "<!-- POSTS_START --><!-- POSTS_END -->"
-        )
+        (tmp_path / "index.html").write_text("<!-- POSTS_START --><!-- POSTS_END -->")
         # Don't create post folder
 
         with patch("boumwave.validation.get_config", return_value=sample_config):
@@ -160,9 +154,7 @@ class TestValidateSitemapEnvironment:
             # Should not raise
             validate_sitemap_environment()
 
-    def test_validate_sitemap_missing(
-        self, tmp_path: Path, monkeypatch, sample_config
-    ):
+    def test_validate_sitemap_missing(self, tmp_path: Path, monkeypatch, sample_config):
         """Test validation fails when sitemap.xml is missing"""
         monkeypatch.chdir(tmp_path)
 
@@ -197,7 +189,7 @@ class TestValidateNowEnvironment:
         monkeypatch.chdir(tmp_path)
 
         # Create a config without now_folder
-        from boumwave.config import BoumWaveConfig, PathsConfig, SiteConfig
+        from boumwave.config import BoumWaveConfig, PathsConfig
 
         config_no_now = BoumWaveConfig(
             paths=PathsConfig(

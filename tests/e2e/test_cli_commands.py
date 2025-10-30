@@ -39,13 +39,18 @@ class TestInitCommand:
                 main()
 
         captured = capsys.readouterr()
-        assert "already exists" in captured.err.lower() or "already exists" in captured.out.lower()
+        assert (
+            "already exists" in captured.err.lower()
+            or "already exists" in captured.out.lower()
+        )
 
 
 class TestScaffoldCommand:
     """E2E tests for 'bw scaffold' command"""
 
-    def test_scaffold_creates_structure(self, tmp_path: Path, monkeypatch, sample_config_file: Path):
+    def test_scaffold_creates_structure(
+        self, tmp_path: Path, monkeypatch, sample_config_file: Path
+    ):
         """Test that 'bw scaffold' creates folder structure"""
         monkeypatch.chdir(tmp_path)
 
@@ -66,7 +71,9 @@ class TestScaffoldCommand:
 class TestNewPostCommand:
     """E2E tests for 'bw new_post' command"""
 
-    def test_new_post_creates_files(self, tmp_path: Path, monkeypatch, sample_config_file: Path):
+    def test_new_post_creates_files(
+        self, tmp_path: Path, monkeypatch, sample_config_file: Path
+    ):
         """Test that 'bw new_post' creates post files"""
         monkeypatch.chdir(tmp_path)
 
@@ -85,8 +92,8 @@ class TestNewPostCommand:
 
         # Check front matter
         en_content = (post_folder / "my_test_post.en.md").read_text()
-        assert "title: \"My Test Post\"" in en_content
-        assert "slug: \"my-test-post\"" in en_content
+        assert 'title: "My Test Post"' in en_content
+        assert 'slug: "my-test-post"' in en_content
         assert "lang: en" in en_content
 
 
@@ -104,7 +111,9 @@ class TestGenerateCommand:
         captured = capsys.readouterr()
         assert "boumwave.toml not found" in captured.err
 
-    def test_generate_creates_html(self, tmp_path: Path, monkeypatch, sample_config_file: Path):
+    def test_generate_creates_html(
+        self, tmp_path: Path, monkeypatch, sample_config_file: Path
+    ):
         """Test that 'bw generate' creates HTML files"""
         monkeypatch.chdir(tmp_path)
 
@@ -129,9 +138,7 @@ class TestGenerateCommand:
         (tmp_path / "templates" / "link.html").write_text(
             '<li><a href="{{ relative_url }}">{{ title }}</a></li>'
         )
-        (tmp_path / "index.html").write_text(
-            "<!-- POSTS_START --><!-- POSTS_END -->"
-        )
+        (tmp_path / "index.html").write_text("<!-- POSTS_START --><!-- POSTS_END -->")
 
         # Create post (content folder already exists from fixture)
         content_folder = tmp_path / "content"
@@ -163,7 +170,10 @@ This is test content.
         assert "Test Post" in html_content
         assert "<h1>" in html_content
         assert "This is test content" in html_content
-        assert '<link href="https://example.com/posts/en/test-post" rel="canonical"' in html_content
+        assert (
+            '<link href="https://example.com/posts/en/test-post" rel="canonical"'
+            in html_content
+        )
 
 
 class TestNewNowCommand:
@@ -218,7 +228,9 @@ published_on = "Publié le"
         expected_file = tmp_path / "now" / f"{today.isoformat()}.md"
         assert expected_file.exists()
 
-    def test_new_now_feature_disabled(self, tmp_path: Path, monkeypatch, sample_config_file: Path, capsys):
+    def test_new_now_feature_disabled(
+        self, tmp_path: Path, monkeypatch, sample_config_file: Path, capsys
+    ):
         """Test error when Now. feature is not configured"""
         monkeypatch.chdir(tmp_path)
 
@@ -271,7 +283,9 @@ published_on = "Published on"
 
         # Create templates
         (tmp_path / "templates").mkdir()
-        (tmp_path / "templates" / "now.html").write_text("<html><body>Now page</body></html>")
+        (tmp_path / "templates" / "now.html").write_text(
+            "<html><body>Now page</body></html>"
+        )
         (tmp_path / "templates" / "now_index.html").write_text(
             '<div class="now">{{ content }}</div>'
         )
@@ -283,7 +297,9 @@ published_on = "Published on"
 
         # Create a Now. post
         (tmp_path / "now").mkdir()
-        (tmp_path / "now" / "2025-10-28.md").write_text("# My status\n\nWorking on tests!")
+        (tmp_path / "now" / "2025-10-28.md").write_text(
+            "# My status\n\nWorking on tests!"
+        )
 
         with patch.object(sys, "argv", ["bw", "generate_now"]):
             main()

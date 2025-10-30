@@ -36,7 +36,7 @@ class TestRenderTemplate:
 
         result = render_template(template_file, sample_enriched_post)
 
-        assert f"<html lang=\"{sample_enriched_post.post.lang}\">" in result
+        assert f'<html lang="{sample_enriched_post.post.lang}">' in result
         assert f"<title>{sample_enriched_post.post.title}</title>" in result
         assert f"<h1>{sample_enriched_post.post.title}</h1>" in result
         assert sample_enriched_post.content_html in result
@@ -114,7 +114,10 @@ image_path: {{ image_path }}
 
         assert f"lang: {sample_enriched_post.post.lang}" in result
         assert f"title: {sample_enriched_post.post.title}" in result
-        assert f"published_datetime_iso: {sample_enriched_post.post.published_datetime_iso}" in result
+        assert (
+            f"published_datetime_iso: {sample_enriched_post.post.published_datetime_iso}"
+            in result
+        )
         assert f"published_on_date: {sample_enriched_post.published_on_date}" in result
         assert f"content: {sample_enriched_post.content_html}" in result
         assert f"image_path: {sample_enriched_post.image_path}" in result

@@ -1,10 +1,7 @@
 """Integration tests for the complete generation flow"""
 
-from datetime import date
 from pathlib import Path
-from unittest.mock import patch
 
-import pytest
 
 from boumwave.config import BoumWaveConfig
 from boumwave.generation.metadata import extract_description, generate_seo_tags
@@ -17,7 +14,9 @@ from boumwave.models import EnrichedPost
 class TestGenerationFlow:
     """Integration tests for the complete post generation flow"""
 
-    def test_complete_generation_pipeline(self, tmp_path: Path, sample_config: BoumWaveConfig):
+    def test_complete_generation_pipeline(
+        self, tmp_path: Path, sample_config: BoumWaveConfig
+    ):
         """Test the complete flow from markdown to HTML with SEO"""
         # 1. Create a markdown file
         post_file = tmp_path / "test_post.md"
@@ -69,7 +68,10 @@ Some additional content here.
         )
 
         assert enriched_post.relative_url == "/posts/en/integration-test-post"
-        assert enriched_post.full_url == "https://example.com/posts/en/integration-test-post"
+        assert (
+            enriched_post.full_url
+            == "https://example.com/posts/en/integration-test-post"
+        )
 
         # 6. Generate SEO tags
         seo_tags = generate_seo_tags(enriched_post)
@@ -105,7 +107,9 @@ Some additional content here.
         assert "<h1>Integration Test Post</h1>" in final_html
         assert enriched_post.content_html in final_html
 
-    def test_multilingual_generation(self, tmp_path: Path, sample_config: BoumWaveConfig):
+    def test_multilingual_generation(
+        self, tmp_path: Path, sample_config: BoumWaveConfig
+    ):
         """Test generating posts in multiple languages"""
         # Create English post
         en_file = tmp_path / "test_en.md"

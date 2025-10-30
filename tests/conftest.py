@@ -19,6 +19,7 @@ from boumwave.models import EnrichedPost, Post
 def reset_config_cache():
     """Reset global config cache before each test"""
     import boumwave.config
+
     boumwave.config._config = None
     yield
     boumwave.config._config = None
@@ -99,7 +100,9 @@ def sample_post_fr() -> Post:
 
 
 @pytest.fixture
-def sample_enriched_post(sample_post: Post, sample_config: BoumWaveConfig) -> EnrichedPost:
+def sample_enriched_post(
+    sample_post: Post, sample_config: BoumWaveConfig
+) -> EnrichedPost:
     """Sample enriched post with HTML content"""
     return EnrichedPost(
         post=sample_post,

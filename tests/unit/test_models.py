@@ -177,7 +177,8 @@ class TestEnrichedPost:
     def test_full_url_computed_field(self, sample_enriched_post: EnrichedPost):
         """Test full_url computed field"""
         assert (
-            sample_enriched_post.full_url == "https://example.com/posts/en/my-awesome-post"
+            sample_enriched_post.full_url
+            == "https://example.com/posts/en/my-awesome-post"
         )
 
     def test_published_on_date_computed_field(self, sample_enriched_post: EnrichedPost):
@@ -237,7 +238,6 @@ class TestNow:
             BoumWaveConfig,
             PathsConfig,
             SiteConfig,
-            Translations,
         )
 
         config = BoumWaveConfig(

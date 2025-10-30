@@ -15,7 +15,6 @@ from boumwave.generation.parsers import (
     find_post_files,
     parse_post_file,
 )
-from boumwave.models import Post
 
 
 class TestParsePostFile:
@@ -158,17 +157,23 @@ class TestFindPostFiles:
 class TestCollectAllPosts:
     """Tests for collect_all_posts"""
 
-    def test_collect_all_posts_empty_folder(self, tmp_path: Path, sample_config, monkeypatch):
+    def test_collect_all_posts_empty_folder(
+        self, tmp_path: Path, sample_config, monkeypatch
+    ):
         """Test collecting posts from empty content folder"""
         monkeypatch.chdir(tmp_path)
         content_folder = tmp_path / "content"
         content_folder.mkdir()
 
-        with patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.parsers.get_config", return_value=sample_config
+        ):
             posts = collect_all_posts()
             assert posts == []
 
-    def test_collect_all_posts_with_posts(self, tmp_path: Path, sample_config, monkeypatch):
+    def test_collect_all_posts_with_posts(
+        self, tmp_path: Path, sample_config, monkeypatch
+    ):
         """Test collecting posts from folder with posts"""
         monkeypatch.chdir(tmp_path)
         content_folder = tmp_path / "content"
@@ -204,7 +209,9 @@ Content 2
 """
         )
 
-        with patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.parsers.get_config", return_value=sample_config
+        ):
             posts = collect_all_posts()
 
             assert len(posts) == 2
@@ -249,7 +256,9 @@ Content
 """
         )
 
-        with patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.parsers.get_config", return_value=sample_config
+        ):
             posts = collect_all_posts()
 
             assert len(posts) == 1
@@ -293,7 +302,9 @@ Content
 """
         )
 
-        with patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.parsers.get_config", return_value=sample_config
+        ):
             posts = collect_all_posts()
 
             # Should only get the valid post

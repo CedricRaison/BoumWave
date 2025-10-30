@@ -6,7 +6,6 @@ from unittest.mock import patch
 
 import pytest
 
-from boumwave.exceptions import FileCreationError
 from boumwave.generation.index_manager import render_post_links, update_index
 from boumwave.models import Post
 
@@ -14,7 +13,9 @@ from boumwave.models import Post
 class TestRenderPostLinks:
     """Tests for render_post_links"""
 
-    def test_render_post_links_empty_list(self, tmp_path: Path, sample_config, monkeypatch):
+    def test_render_post_links_empty_list(
+        self, tmp_path: Path, sample_config, monkeypatch
+    ):
         """Test rendering with empty post list"""
         monkeypatch.chdir(tmp_path)
         # Create link template
@@ -24,7 +25,9 @@ class TestRenderPostLinks:
             '<li><a href="{{ relative_url }}">{{ title }}</a></li>'
         )
 
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.index_manager.get_config", return_value=sample_config
+        ):
             result = render_post_links([])
             assert result == ""
 
@@ -40,7 +43,9 @@ class TestRenderPostLinks:
             '<li><a href="{{ relative_url }}">{{ title }}</a></li>'
         )
 
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.index_manager.get_config", return_value=sample_config
+        ):
             result = render_post_links([sample_post])
 
             assert sample_post.title in result
@@ -74,9 +79,11 @@ class TestRenderPostLinks:
         # Create link template
         template_folder = tmp_path / "templates"
         template_folder.mkdir()
-        (template_folder / "link.html").write_text('{{ title }}\n')
+        (template_folder / "link.html").write_text("{{ title }}\n")
 
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.index_manager.get_config", return_value=sample_config
+        ):
             # Pass in random order
             result = render_post_links([old_post, new_post, middle_post])
 
@@ -94,7 +101,9 @@ class TestRenderPostLinks:
         monkeypatch.chdir(tmp_path)
         # Don't create template folder
 
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config):
+        with patch(
+            "boumwave.generation.index_manager.get_config", return_value=sample_config
+        ):
             from boumwave.exceptions import TemplateNotFoundError
 
             with pytest.raises(TemplateNotFoundError):
@@ -149,8 +158,13 @@ Content
         )
 
         # Mock both get_config locations
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config), \
-             patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with (
+            patch(
+                "boumwave.generation.index_manager.get_config",
+                return_value=sample_config,
+            ),
+            patch("boumwave.generation.parsers.get_config", return_value=sample_config),
+        ):
             update_index()
 
             # Read updated index
@@ -191,8 +205,13 @@ Content
         content_folder.mkdir()
 
         # Mock both get_config locations
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config), \
-             patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with (
+            patch(
+                "boumwave.generation.index_manager.get_config",
+                return_value=sample_config,
+            ),
+            patch("boumwave.generation.parsers.get_config", return_value=sample_config),
+        ):
             update_index()
 
             # Read updated index
@@ -228,15 +247,20 @@ Old content that should be replaced
         # Create templates
         template_folder = tmp_path / "templates"
         template_folder.mkdir()
-        (template_folder / "link.html").write_text('<li>{{ title }}</li>')
+        (template_folder / "link.html").write_text("<li>{{ title }}</li>")
 
         # Create empty content folder
         content_folder = tmp_path / "content"
         content_folder.mkdir()
 
         # Mock both get_config locations
-        with patch("boumwave.generation.index_manager.get_config", return_value=sample_config), \
-             patch("boumwave.generation.parsers.get_config", return_value=sample_config):
+        with (
+            patch(
+                "boumwave.generation.index_manager.get_config",
+                return_value=sample_config,
+            ),
+            patch("boumwave.generation.parsers.get_config", return_value=sample_config),
+        ):
             update_index()
 
             updated_content = (tmp_path / "index.html").read_text()

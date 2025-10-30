@@ -1,6 +1,5 @@
 """Unit tests for config.py"""
 
-import os
 from pathlib import Path
 
 import pytest
