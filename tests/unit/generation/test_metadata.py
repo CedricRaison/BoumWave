@@ -87,9 +87,44 @@ class TestGenerateMetaTags:
         assert '<meta name="description"' in meta_tags
         assert sample_enriched_post.description in meta_tags
         assert '<meta property="og:type" content="article">' in meta_tags
-        assert f'<meta property="og:title" content="{sample_enriched_post.post.title}">' in meta_tags
-        assert f'<meta property="og:url" content="{sample_enriched_post.full_url}">' in meta_tags
+        assert (
+            f'<meta property="og:title" content="{sample_enriched_post.post.title}">'
+            in meta_tags
+        )
+        assert (
+            f'<meta property="og:url" content="{sample_enriched_post.full_url}">'
+            in meta_tags
+        )
         assert '<meta name="twitter:card" content="summary_large_image">' in meta_tags
+
+    def test_generate_meta_tags_escapes_quotes(self, sample_config):
+        """Test that quotes are escaped in both title and description"""
+        from datetime import date
+        from boumwave.models import Post, EnrichedPost
+
+        post_with_quotes = Post(
+            title='Article about "Citations"',
+            slug="article-about-citations",
+            published_date=date(2025, 10, 23),
+            lang="en",
+        )
+
+        enriched_post = EnrichedPost(
+            post=post_with_quotes,
+            description='Learn about "proper" quoting in articles',
+            content_html="<p>Content</p>",
+            config=sample_config,
+        )
+
+        meta_tags = generate_meta_tags(enriched_post)
+
+        # Verify both title and description have escaped quotes
+        assert "&quot;Citations&quot;" in meta_tags
+        assert "&quot;proper&quot;" in meta_tags
+
+        # Verify the output is valid HTML
+        soup = BeautifulSoup(meta_tags, "html.parser")
+        assert soup is not None
 
 
 class TestGenerateJsonLd:
@@ -181,7 +216,9 @@ class TestInjectMetaTagsAndCanonical:
             i for i, c in enumerate(children) if c.name == "meta" and c.get("charset")
         )
         canonical_pos = next(
-            i for i, c in enumerate(children) if c.name == "link" and c.get("rel") == ["canonical"]
+            i
+            for i, c in enumerate(children)
+            if c.name == "link" and c.get("rel") == ["canonical"]
         )
 
         # Canonical should be after charset

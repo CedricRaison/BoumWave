@@ -1,5 +1,6 @@
 """Metadata extraction and meta tag generation"""
 
+import html
 import json
 
 import markdown
@@ -58,13 +59,18 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
         HTML string with meta tags
     """
     post = enriched_post.post
+
+    # Escape HTML special characters in user-provided content
+    title = html.escape(post.title, quote=True)
+    description = html.escape(enriched_post.description, quote=True)
+
     meta_tags = f"""    <!-- SEO -->
-    <meta name="description" content="{enriched_post.description}">
+    <meta name="description" content="{description}">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="{post.title}">
-    <meta property="og:description" content="{enriched_post.description}">
+    <meta property="og:title" content="{title}">
+    <meta property="og:description" content="{description}">
     <meta property="og:url" content="{enriched_post.full_url}">
     <meta property="og:image" content="{enriched_post.image_path}">
     <meta property="og:locale" content="{post.lang}">
@@ -72,8 +78,8 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{post.title}">
-    <meta name="twitter:description" content="{enriched_post.description}">
+    <meta name="twitter:title" content="{title}">
+    <meta name="twitter:description" content="{description}">
     <meta name="twitter:image" content="{enriched_post.image_path}">"""
 
     return meta_tags
