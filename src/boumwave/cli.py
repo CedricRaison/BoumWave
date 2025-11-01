@@ -33,13 +33,13 @@ def main() -> None:
 
     # 'new_post' subcommand
     new_post_parser = subparsers.add_parser(
-        "new_post", help="Create a new post with language files"
+        "new_post", help='Create a new post with language files (usage: bw new_post "Post Title")'
     )
     new_post_parser.add_argument("title", help="Title of the new post")
 
     # 'generate' subcommand
     generate_parser = subparsers.add_parser(
-        "generate", help="Generate HTML from markdown post"
+        "generate", help="Generate HTML from markdown post (usage: bw generate <post_folder_name>)"
     )
     generate_parser.add_argument(
         "post_name", help="Name of the post folder to generate"
