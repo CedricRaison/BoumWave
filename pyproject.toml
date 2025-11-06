@@ -1,6 +1,6 @@
 [project]
 name = "BoumWave"
-version = "2.1.1"
+version = "2.1.2"
 description = "The static blog generator that does exactly what it needs to. Nothing more."
 readme = "README.md"
 requires-python = ">=3.13"

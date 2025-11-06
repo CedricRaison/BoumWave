@@ -64,6 +64,9 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     title = html.escape(post.title, quote=True)
     description = html.escape(enriched_post.description, quote=True)
 
+    # Build full image URL (site_url + image_path)
+    image_url = f"{enriched_post.config.site.site_url_base}/{enriched_post.image_path}"
+
     meta_tags = f"""    <!-- SEO -->
     <meta name="description" content="{description}">
 
@@ -72,7 +75,7 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     <meta property="og:title" content="{title}">
     <meta property="og:description" content="{description}">
     <meta property="og:url" content="{enriched_post.full_url}">
-    <meta property="og:image" content="{enriched_post.image_path}">
+    <meta property="og:image" content="{image_url}">
     <meta property="og:locale" content="{post.lang}">
     <meta property="article:published_time" content="{post.published_datetime_iso}">
 
@@ -80,7 +83,7 @@ def generate_meta_tags(enriched_post: EnrichedPost) -> str:
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{title}">
     <meta name="twitter:description" content="{description}">
-    <meta name="twitter:image" content="{enriched_post.image_path}">"""
+    <meta name="twitter:image" content="{image_url}">"""
 
     return meta_tags
 
@@ -97,13 +100,16 @@ def generate_json_ld(enriched_post: EnrichedPost) -> str:
     """
     post = enriched_post.post
 
+    # Build full image URL (site_url + image_path)
+    image_url = f"{enriched_post.config.site.site_url_base}/{enriched_post.image_path}"
+
     json_ld_data = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
         "headline": post.title,
         "datePublished": post.published_datetime_iso,
         "url": enriched_post.full_url,
-        "image": enriched_post.image_path,
+        "image": image_url,
         "description": enriched_post.description,
         "inLanguage": post.lang,
     }
