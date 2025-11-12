@@ -95,7 +95,7 @@ Creates the necessary folders and example templates:
 - `templates/link.html`: The template used to generate each post link in your index
 - `index.html`: Your blog homepage with a list of all posts
 
-**About index.html**: BoumWave generates a default `index.html` file, but you can bring your own. Just make sure it contains the markers `<!-- POSTS_START -->` and `<!-- POSTS_END -->` where you want the post list to appear. BoumWave will automatically insert your posts there, sorted by date.
+**About index.html**: BoumWave generates a default `index.html` file, but you can bring your own. Just make sure it contains the markers `<!-- BOUMWAVE_POSTS_START -->` and `<!-- BOUMWAVE_POSTS_END -->` where you want the post list to appear. BoumWave will automatically insert your posts there, sorted by date.
 
 You can customize all paths by editing the `boumwave.toml` file.
 
